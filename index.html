@@ -1202,7 +1202,7 @@ function openLancamento(data) {
   const rows = document.getElementById('empresaRows');
   const dataInput = document.getElementById('lancData');
   dataInput.value = data || new Date().toISOString().slice(0,10);
-  document.getElementById('modalTitle').textContent = 'Lançar Refeições — ' + fmtData(dataInput.value);
+  document.getElementById('modalTitle').textContent = 'Lançar Refeições - ' + fmtData(dataInput.value);
 
   rows.innerHTML = empresas.map(e => `
     <div class="empresa-row">
@@ -1345,10 +1345,10 @@ async function renderDashboard() {
           const tot = d.cafe*precos.cafe + d.almoco*precos.almoco + d.janta*precos.janta + d.marmita*precos.marmita_almoco;
           return `<tr>
             <td class="hl">${p}</td>
-            <td class="mono">${d.cafe||'—'}</td>
-            <td class="mono">${d.almoco||'—'}</td>
-            <td class="mono">${d.janta||'—'}</td>
-            <td class="mono">${d.marmita||'—'}</td>
+            <td class="mono">${d.cafe||'&#8212;'}</td>
+            <td class="mono">${d.almoco||'&#8212;'}</td>
+            <td class="mono">${d.janta||'&#8212;'}</td>
+            <td class="mono">${d.marmita||'&#8212;'}</td>
             <td class="mono" style="color:var(--green);font-weight:600">R$ ${fmtNum(tot)}</td>
           </tr>`;
         }).join('')}
@@ -1476,10 +1476,10 @@ async function carregarHistorico() {
         <td class="mono">${fmtData(l.data)}</td>
         <td class="hl">${nome}</td>
         <td><span class="badge badge-blue">${d.pagador || nome}</span></td>
-        <td class="mono">${d.cafe||'—'}</td>
-        <td class="mono">${d.almoco||'—'}</td>
-        <td class="mono">${d.janta||'—'}</td>
-        <td class="mono">${d.marmita||'—'}</td>
+        <td class="mono">${d.cafe||'&#8212;'}</td>
+        <td class="mono">${d.almoco||'&#8212;'}</td>
+        <td class="mono">${d.janta||'&#8212;'}</td>
+        <td class="mono">${d.marmita||'&#8212;'}</td>
         <td class="mono" style="color:var(--green)">R$ ${fmtNum(total)}</td>
         <td class="no-print"><button class="btn btn-ghost btn-sm" onclick="openLancamento('${l.data}')">✏️</button></td>
       </tr>`;
@@ -1493,10 +1493,10 @@ async function carregarHistorico() {
 
   const totalRow = `<tr style="background:var(--surface2);font-weight:600;">
     <td colspan="3" style="color:var(--text);font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">TOTAL</td>
-    <td class="mono" style="color:var(--amber)">${totCafe||'—'}</td>
-    <td class="mono" style="color:var(--accent2)">${totAlmoco||'—'}</td>
-    <td class="mono" style="color:var(--green)">${totJanta||'—'}</td>
-    <td class="mono" style="color:#c878ff">${totMarmita||'—'}</td>
+    <td class="mono" style="color:var(--amber)">${totCafe||'&#8212;'}</td>
+    <td class="mono" style="color:var(--accent2)">${totAlmoco||'&#8212;'}</td>
+    <td class="mono" style="color:var(--green)">${totJanta||'&#8212;'}</td>
+    <td class="mono" style="color:#c878ff">${totMarmita||'&#8212;'}</td>
     <td class="mono" style="color:var(--green);font-size:14px">R$ ${fmtNum(grandTotal)}</td>
     <td class="no-print"></td>
   </tr>`;
@@ -1704,7 +1704,7 @@ if (e.target === this) closeModal();
 
 // Atualizar título do modal ao mudar data
 document.getElementById(‘lancData’).addEventListener(‘change’, function() {
-document.getElementById(‘modalTitle’).textContent = ’Lançar Refeições — ’ + fmtData(this.value);
+document.getElementById(‘modalTitle’).textContent = ’Lançar Refeições - ’ + fmtData(this.value);
 carregarDadosDia(this.value);
 });
 </script>
