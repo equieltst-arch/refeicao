@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Controle de Alimentação — PCH Lebon Regis</title>
+<title>Controle de Alimentação - PCH Lebon Regis</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <!-- Firebase compat (funciona com file://) -->
@@ -801,7 +801,6 @@ tbody td.hl { color: var(--text); font-weight: 500; }
       <div class="topbar-meta" id="topbarMeta"></div>
     </div>
 
-```
 <div class="content">
 
   <!-- ==================== DASHBOARD ==================== -->
@@ -820,30 +819,30 @@ tbody td.hl { color: var(--text); font-weight: 500; }
     <div class="grid-4 mb16" id="statsCards">
       <div class="stat-card amber">
         <div class="stat-label">☕ Cafés</div>
-        <div class="stat-value" id="statCafe">—</div>
-        <div class="stat-sub" id="statCafeVal">—</div>
+        <div class="stat-value" id="statCafe">-</div>
+        <div class="stat-sub" id="statCafeVal">-</div>
       </div>
       <div class="stat-card blue">
         <div class="stat-label">🍽 Almoços</div>
-        <div class="stat-value" id="statAlmoco">—</div>
-        <div class="stat-sub" id="statAlmocoVal">—</div>
+        <div class="stat-value" id="statAlmoco">-</div>
+        <div class="stat-sub" id="statAlmocoVal">-</div>
       </div>
       <div class="stat-card green">
         <div class="stat-label">🌙 Jantas</div>
-        <div class="stat-value" id="statJanta">—</div>
-        <div class="stat-sub" id="statJantaVal">—</div>
+        <div class="stat-value" id="statJanta">-</div>
+        <div class="stat-sub" id="statJantaVal">-</div>
       </div>
       <div class="stat-card red">
         <div class="stat-label">📦 Marmitas</div>
-        <div class="stat-value" id="statMarmita">—</div>
-        <div class="stat-sub" id="statMarmitaVal">—</div>
+        <div class="stat-value" id="statMarmita">-</div>
+        <div class="stat-sub" id="statMarmitaVal">-</div>
       </div>
     </div>
 
     <div class="grid-2">
       <div class="card">
         <div class="card-title">💰 Total Faturado no Mês</div>
-        <div style="font-family:var(--mono);font-size:36px;font-weight:600;color:var(--green)" id="totalMes">R$ —</div>
+        <div style="font-family:var(--mono);font-size:36px;font-weight:600;color:var(--green)" id="totalMes">R$ -</div>
         <div style="font-size:12px;color:var(--text3);margin-top:6px" id="totalMesSub"></div>
       </div>
       <div class="card">
@@ -984,7 +983,6 @@ tbody td.hl { color: var(--text); font-weight: 500; }
   </div>
 
 </div><!-- /content -->
-```
 
   </div><!-- /main -->
 </div><!-- /app -->
@@ -1027,7 +1025,7 @@ window.addEventListener('firebaseReady', async () => {
 function updateSidebarFooter() {
   const now = new Date();
   document.getElementById('sidebarFooter').innerHTML =
-    `${now.toLocaleDateString('pt-BR')}<br><span style="color:var(--green)">● Online</span>`;
+    `${now.toLocaleDateString('pt-BR')}<br><span style="color:var(--green)">&#9679; Online</span>`;
 }
 
 // ===========================================================
@@ -1481,7 +1479,7 @@ async function carregarHistorico() {
         <td class="mono">${d.janta||'&#8212;'}</td>
         <td class="mono">${d.marmita||'&#8212;'}</td>
         <td class="mono" style="color:var(--green)">R$ ${fmtNum(total)}</td>
-        <td class="no-print"><button class="btn btn-ghost btn-sm" onclick="openLancamento('${l.data}')">✏️</button></td>
+        <td class="no-print"><button class="btn btn-ghost btn-sm" onclick="openLancamento('${l.data}')">Editar</button></td>
       </tr>`;
     }
   }
@@ -1558,7 +1556,6 @@ function imprimirPorEmpresa() {
     '@media print { body { padding: 12px; } }',
     '</style>',
 
-```
 '</head>',
 '<body>',
 '<div class="header">',
@@ -1570,9 +1567,8 @@ tblHtml,
 '<div class="footer">BUCAGRANS Construtora de Obras S.A. - PCH Lebon Regis</div>',
 '</body>',
 '</html>'
-```
 
-].join('\n');
+].join(’\n’);
 
 const win = window.open(’’, ‘_blank’, ‘width=900,height=700’);
 win.document.open();
@@ -1626,7 +1622,6 @@ const totMarmita = d.marmita * precos.marmita_almoco;
 const total      = totCafe + totAlmoco + totJanta + totMarmita;
 grandTotal += total;
 
-```
 totaisRows += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;">
   <span style="font-weight:600;color:var(--text)">${pag}</span>
   <span style="font-family:var(--mono);color:var(--green)">R$ ${fmtNum(total)}</span>
@@ -1647,7 +1642,6 @@ return `<div class="empresa-card">
     </div>
   </div>
 </div>`;
-```
 
 }).join(’’);
 
