@@ -1521,52 +1521,64 @@ function imprimirPorEmpresa() {
   if (!empresa) { toast('Selecione uma empresa primeiro', 'error'); return; }
 
   const [ano, m] = mes.split('-');
-  const mesNome = `${MESES[parseInt(m)-1]} ${ano}`;
+  const mesNome = MESES[parseInt(m)-1] + ' ' + ano;
   const tblEl = document.getElementById('tabelaHistorico');
-  const tblHtml = tblEl.innerHTML;
 
-  const win = window.open('', '_blank', 'width=900,height=700');
-  win.document.write(`<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>Histórico — ${empresa} — ${mesNome}</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: Arial, sans-serif; font-size: 12px; color: #1a1a1a; padding: 24px; }
-  .header { border-bottom: 2px solid #1a3a6e; padding-bottom: 12px; margin-bottom: 20px; }
-  .header h1 { font-size: 18px; color: #1a3a6e; }
-  .header .sub { font-size: 12px; color: #555; margin-top: 4px; }
-  .header .meta { font-size: 11px; color: #888; margin-top: 2px; }
-  table { width: 100%; border-collapse: collapse; }
-  thead th { background: #1a3a6e; color: #fff; padding: 8px 10px; text-align: left; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; }
-  tbody tr { border-bottom: 1px solid #ddd; }
-  tbody tr:nth-child(even) { background: #f7f9fc; }
-  tbody td { padding: 7px 10px; color: #333; }
-  tbody tr:last-child { background: #e8f0fe; font-weight: bold; border-top: 2px solid #1a3a6e; }
-  .badge { background: #e3ecff; color: #1a3a6e; padding: 2px 7px; border-radius: 4px; font-size: 10px; }
-  .no-print { display: none; }
-  .empty-state { text-align: center; padding: 30px; color: #888; }
-  .footer { margin-top: 20px; font-size: 10px; color: #aaa; text-align: right; }
-  @media print {
-    body { padding: 12px; }
-    .header { page-break-after: avoid; }
-  }
-</style>
+  // Clonar tabela e remover coluna "Acao" (no-print)
+  const tblClone = tblEl.cloneNode(true);
+  tblClone.querySelectorAll('.no-print').forEach(el => el.remove());
+  const tblHtml = tblClone.innerHTML;
 
-</head>
-<body>
-<div class="header">
-  <h1>Controle de Alimentação — PCH Lebon Regis</h1>
-  <div class="sub">Empresa: <strong>${empresa}</strong> &nbsp;|&nbsp; Período: <strong>${mesNome}</strong></div>
-  <div class="meta">Emitido em: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}</div>
-</div>
-${tblHtml}
-<div class="footer">BUCAGRANS Construtora de Obras S.A. — PCH Lebon Regis</div>
-' + '<scr' + 'ipt>window.onload=()=>{window.print();}</' + 'scr' + 'ipt>'
-</body>
-</html>`);
-  win.document.close();
+  const dataEmissao = new Date().toLocaleDateString('pt-BR');
+  const horaEmissao = new Date().toLocaleTimeString('pt-BR');
+
+  const html = [
+    '<!DOCTYPE html>',
+    '<html lang="pt-BR">',
+    '<head>',
+    '<meta charset="UTF-8">',
+    '<title>Historico - ' + empresa + ' - ' + mesNome + '</title>',
+    '<style>',
+    '* { box-sizing: border-box; margin: 0; padding: 0; }',
+    'body { font-family: Arial, sans-serif; font-size: 12px; color: #1a1a1a; padding: 24px; }',
+    '.header { border-bottom: 2px solid #1a3a6e; padding-bottom: 12px; margin-bottom: 20px; }',
+    '.header h1 { font-size: 18px; color: #1a3a6e; }',
+    '.header .sub { font-size: 12px; color: #555; margin-top: 4px; }',
+    '.header .meta { font-size: 11px; color: #888; margin-top: 2px; }',
+    'table { width: 100%; border-collapse: collapse; }',
+    'thead th { background: #1a3a6e; color: #fff; padding: 8px 10px; text-align: left; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; }',
+    'tbody tr { border-bottom: 1px solid #ddd; }',
+    'tbody tr:nth-child(even) { background: #f7f9fc; }',
+    'tbody td { padding: 7px 10px; color: #333; }',
+    'tbody tr:last-child { background: #e8f0fe; font-weight: bold; border-top: 2px solid #1a3a6e; }',
+    '.badge { background: #e3ecff; color: #1a3a6e; padding: 2px 7px; border-radius: 4px; font-size: 10px; }',
+    '.no-print { display: none; }',
+    '.empty-state { text-align: center; padding: 30px; color: #888; }',
+    '.footer { margin-top: 20px; font-size: 10px; color: #aaa; text-align: right; }',
+    '@media print { body { padding: 12px; } }',
+    '</style>',
+
+```
+'</head>',
+'<body>',
+'<div class="header">',
+'  <h1>Controle de Alimentacao - PCH Lebon Regis</h1>',
+'  <div class="sub">Empresa: <strong>' + empresa + '</strong> | Periodo: <strong>' + mesNome + '</strong></div>',
+'  <div class="meta">Emitido em: ' + dataEmissao + ' as ' + horaEmissao + '</div>',
+'</div>',
+tblHtml,
+'<div class="footer">BUCAGRANS Construtora de Obras S.A. - PCH Lebon Regis</div>',
+'</body>',
+'</html>'
+```
+
+].join(’\n’);
+
+const win = window.open(’’, ‘_blank’, ‘width=900,height=700’);
+win.document.open();
+win.document.write(html);
+win.document.close();
+setTimeout(() => win.print(), 800);
 }
 
 // ===========================================================
