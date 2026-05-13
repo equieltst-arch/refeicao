@@ -34,6 +34,8 @@
   --border: #2a3550; --border2: #344060; --accent: #2d6be4; --accent2: #3d82ff;
   --accent-glow: rgba(45,107,228,0.18); --green: #22c87a; --green-dim: rgba(34,200,122,0.12);
   --amber: #f5a623; --amber-dim: rgba(245,166,35,0.12); --red: #e05252; --red-dim: rgba(224,82,82,0.12);
+  --purple: #c878ff; --purple-dim: rgba(200,120,255,0.12);
+  --teal: #22d4c8; --teal-dim: rgba(34,212,200,0.12);
   --text: #e8edf5; --text2: #8fa0be; --text3: #5a6e8a;
   --mono: 'IBM Plex Mono', monospace; --sans: 'IBM Plex Sans', sans-serif;
   --radius: 8px; --radius2: 12px;
@@ -51,6 +53,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 18px; cursor: pointer; font-size: 13px; color: var(--text2); transition: all 0.15s; border-left: 2px solid transparent; user-select: none; }
 .nav-item:hover { color: var(--text); background: var(--surface2); }
 .nav-item.active { color: var(--accent2); background: var(--accent-glow); border-left-color: var(--accent2); }
+.nav-item.active.teal-nav { color: var(--teal); background: var(--teal-dim); border-left-color: var(--teal); }
 .nav-item .icon { font-size: 16px; width: 18px; text-align: center; }
 .sidebar-footer { padding: 14px 18px; border-top: 1px solid var(--border); font-family: var(--mono); font-size: 9px; color: var(--text3); }
 .main { margin-left: 220px; flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
@@ -67,9 +70,10 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 .form-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
 .form-group { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 140px; }
 .form-group label { font-size: 11px; font-family: var(--mono); color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; }
-.form-group input, .form-group select { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--sans); font-size: 13px; padding: 8px 12px; outline: none; transition: border-color 0.15s; }
-.form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+.form-group input, .form-group select, .form-group textarea { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--sans); font-size: 13px; padding: 8px 12px; outline: none; transition: border-color 0.15s; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
 .form-group input[type="number"] { font-family: var(--mono); }
+.form-group textarea { resize: vertical; min-height: 60px; }
 select option { background: var(--surface2); }
 .btn { display: inline-flex; align-items: center; gap: 7px; padding: 8px 18px; border-radius: var(--radius); font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; white-space: nowrap; }
 .btn-primary { background: var(--accent); color: #fff; } .btn-primary:hover { background: var(--accent2); }
@@ -77,9 +81,10 @@ select option { background: var(--surface2); }
 .btn-danger { background: var(--red-dim); color: var(--red); border: 1px solid var(--red); } .btn-danger:hover { background: var(--red); color: #fff; }
 .btn-sm { padding: 5px 12px; font-size: 12px; }
 .btn-green { background: var(--green-dim); color: var(--green); border: 1px solid var(--green); } .btn-green:hover { background: var(--green); color: #000; }
+.btn-teal { background: var(--teal-dim); color: var(--teal); border: 1px solid var(--teal); } .btn-teal:hover { background: var(--teal); color: #000; }
 .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); padding: 18px 20px; position: relative; overflow: hidden; }
 .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
-.stat-card.blue::before { background: var(--accent2); } .stat-card.green::before { background: var(--green); } .stat-card.amber::before { background: var(--amber); } .stat-card.red::before { background: var(--red); }
+.stat-card.blue::before { background: var(--accent2); } .stat-card.green::before { background: var(--green); } .stat-card.amber::before { background: var(--amber); } .stat-card.red::before { background: var(--red); } .stat-card.teal::before { background: var(--teal); } .stat-card.purple::before { background: var(--purple); }
 .stat-label { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
 .stat-value { font-family: var(--mono); font-size: 26px; font-weight: 600; color: var(--text); line-height: 1; }
 .stat-value.sm { font-size: 20px; } .stat-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
@@ -94,6 +99,9 @@ tbody td.mono { font-family: var(--mono); } tbody td.hl { color: var(--text); fo
 .badge-blue { background: var(--accent-glow); color: var(--accent2); }
 .badge-green { background: var(--green-dim); color: var(--green); }
 .badge-amber { background: var(--amber-dim); color: var(--amber); }
+.badge-red { background: var(--red-dim); color: var(--red); }
+.badge-teal { background: var(--teal-dim); color: var(--teal); }
+.badge-purple { background: var(--purple-dim); color: var(--purple); }
 .cal-nav { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
 .cal-nav .month-title { font-size: 18px; font-weight: 600; flex: 1; text-align: center; font-family: var(--mono); color: var(--text); }
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
@@ -108,7 +116,7 @@ tbody td.mono { font-family: var(--mono); } tbody td.hl { color: var(--text); fo
 .cal-chip.cafe { background: var(--amber-dim); color: var(--amber); }
 .cal-chip.almoco { background: var(--accent-glow); color: var(--accent2); }
 .cal-chip.janta { background: var(--green-dim); color: var(--green); }
-.cal-chip.marmita { background: rgba(200,120,255,0.12); color: #c878ff; }
+.cal-chip.marmita { background: var(--purple-dim); color: var(--purple); }
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
 .modal-overlay.open { display: flex; }
 .modal { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius2); width: 560px; max-height: 90vh; overflow-y: auto; padding: 24px; position: relative; }
@@ -139,7 +147,37 @@ tbody td.mono { font-family: var(--mono); } tbody td.hl { color: var(--text); fo
 .empresa-card-body { padding: 12px 16px; }
 .empresa-meal-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
 .empresa-meal-row:last-child { border-bottom: none; }
-@media print { .sidebar, .topbar, .no-print { display: none !important; } .main { margin-left: 0; } body { background: #fff; color: #000; } .card, .stat-card, .empresa-card { border: 1px solid #ccc; break-inside: avoid; } .card-title, .stat-label, .empresa-card-name { color: #333; } .stat-value, .empresa-card-total { color: #000; } tbody td, thead th { color: #333; } }
+
+/* ── DESCONTOS ── */
+.desc-tipo-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+.desc-tab { padding: 8px 20px; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--border2); color: var(--text3); background: var(--surface2); transition: all 0.15s; }
+.desc-tab.active { background: var(--teal-dim); color: var(--teal); border-color: var(--teal); }
+.diesel-calc-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; align-items: end; }
+.diesel-result { background: var(--surface2); border: 1px solid var(--teal); border-radius: var(--radius); padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
+.diesel-result-label { font-size: 11px; font-family: var(--mono); color: var(--teal); letter-spacing: 0.08em; text-transform: uppercase; }
+.diesel-result-val { font-family: var(--mono); font-size: 20px; font-weight: 600; color: var(--teal); }
+.desc-list-item { display: grid; grid-template-columns: 90px 1fr 1fr 80px auto; gap: 10px; align-items: center; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; }
+.desc-list-item .tipo-badge { font-family: var(--mono); font-size: 11px; padding: 2px 8px; border-radius: 4px; text-align: center; }
+.tipo-diesel { background: var(--teal-dim); color: var(--teal); }
+.tipo-outro { background: var(--amber-dim); color: var(--amber); }
+.desc-empresa-resumo { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius2); overflow: hidden; }
+.desc-empresa-resumo-header { padding: 12px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.desc-empresa-resumo-body { padding: 12px 16px; }
+.desc-detalhe-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.desc-detalhe-row:last-child { border-bottom: none; }
+.impacto-banner { background: linear-gradient(135deg, rgba(34,212,200,0.08), rgba(34,200,122,0.08)); border: 1px solid var(--teal); border-radius: var(--radius2); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.impacto-banner-label { font-size: 12px; color: var(--text3); font-family: var(--mono); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+.impacto-banner-val { font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--teal); }
+
+@media print {
+  .sidebar, .topbar, .no-print { display: none !important; }
+  .main { margin-left: 0; }
+  body { background: #fff; color: #000; }
+  .card, .stat-card, .empresa-card, .desc-empresa-resumo { border: 1px solid #ccc; break-inside: avoid; }
+  .card-title, .stat-label, .empresa-card-name { color: #333; }
+  .stat-value, .empresa-card-total { color: #000; }
+  tbody td, thead th { color: #333; }
+}
 .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .section-title { font-size: 20px; font-weight: 600; color: var(--text); }
 .section-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
@@ -155,6 +193,7 @@ tbody td.mono { font-family: var(--mono); } tbody td.hl { color: var(--text); fo
 
 <div class="toast-wrap" id="toastWrap"></div>
 
+<!-- MODAL REFEIÇÕES -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-header">
@@ -182,6 +221,81 @@ tbody td.mono { font-family: var(--mono); } tbody td.hl { color: var(--text); fo
   </div>
 </div>
 
+<!-- MODAL DESCONTO -->
+<div class="modal-overlay" id="modalDesconto">
+  <div class="modal" style="width:600px">
+    <div class="modal-header">
+      <div class="modal-title" id="modalDescontoTitle">Novo Desconto</div>
+      <button class="modal-close" onclick="closeModalDesconto()">✕</button>
+    </div>
+
+    <!-- Tabs tipo -->
+    <div class="desc-tipo-tabs">
+      <div class="desc-tab active" id="tabDiesel" onclick="setDescTipo('diesel')">⛽ Diesel</div>
+      <div class="desc-tab" id="tabOutro" onclick="setDescTipo('outro')">📋 Outro</div>
+    </div>
+
+    <!-- Campos comuns -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Empresa</label>
+        <select id="descEmpresa"></select>
+      </div>
+      <div class="form-group">
+        <label>Data</label>
+        <input type="date" id="descData">
+      </div>
+    </div>
+
+    <!-- Campos Diesel -->
+    <div id="camposDiesel">
+      <div class="form-row">
+        <div class="form-group" style="flex:1">
+          <label>Litros</label>
+          <input type="number" id="descLitros" min="0" step="0.01" placeholder="0,00" oninput="calcDiesel()">
+        </div>
+        <div class="form-group" style="flex:1">
+          <label>Valor por Litro (R$)</label>
+          <input type="number" id="descValorLitro" min="0" step="0.01" placeholder="0,00" oninput="calcDiesel()">
+        </div>
+      </div>
+      <div class="diesel-result mb16">
+        <div>
+          <div class="diesel-result-label">Total Calculado</div>
+          <div style="font-size:11px;color:var(--text3)" id="descDieselFormula">— litros × R$ —</div>
+        </div>
+        <div class="diesel-result-val" id="descDieselTotal">R$ 0,00</div>
+      </div>
+    </div>
+
+    <!-- Campos Outro -->
+    <div id="camposOutro" style="display:none">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Descrição</label>
+          <input type="text" id="descOutroDescricao" placeholder="Ex: Óleo lubrificante, peças, etc.">
+        </div>
+        <div class="form-group" style="max-width:160px">
+          <label>Valor (R$)</label>
+          <input type="number" id="descOutroValor" min="0" step="0.01" placeholder="0,00">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Observação (opcional)</label>
+        <textarea id="descObs" placeholder="Informações adicionais..."></textarea>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:8px;justify-content:flex-end;">
+      <button class="btn btn-ghost" onclick="closeModalDesconto()">Cancelar</button>
+      <button class="btn btn-teal" onclick="salvarDesconto()">&#128190; Salvar Desconto</button>
+    </div>
+  </div>
+</div>
+
 <div class="app">
   <nav class="sidebar">
     <div class="sidebar-logo">
@@ -194,6 +308,7 @@ tbody td.mono { font-family: var(--mono); } tbody td.hl { color: var(--text); fo
       <div class="nav-item" onclick="navTo('calendario', this)"><span class="icon">&#128197;</span> Calendário</div>
       <div class="nav-item" onclick="navTo('historico', this)"><span class="icon">&#128203;</span> Histórico</div>
       <div class="nav-item" onclick="navTo('resumo', this)"><span class="icon">&#127970;</span> Resumo Empresas</div>
+      <div class="nav-item" id="navDescontos" onclick="navTo('descontos', this)"><span class="icon">⛽</span> Descontos</div>
       <div class="nav-section-label">Configurações</div>
       <div class="nav-item" onclick="navTo('precos', this)"><span class="icon">&#128176;</span> Preços</div>
       <div class="nav-item" onclick="navTo('empresas', this)"><span class="icon">&#9881;&#65039;</span> Empresas</div>
@@ -218,7 +333,7 @@ tbody td.mono { font-family: var(--mono); } tbody td.hl { color: var(--text); fo
           </div>
           <div class="flex-gap no-print">
             <button class="btn btn-ghost" onclick="openLancamento()">&#10133; Novo Lançamento</button>
-            <button class="btn btn-primary" onclick="navTo('resumo', document.querySelector('.nav-item:nth-child(5)'))">Ver Resumo</button>
+            <button class="btn btn-primary" onclick="navTo('resumo', document.querySelectorAll('.nav-item')[3])">Ver Resumo</button>
           </div>
         </div>
         <div class="grid-4 mb16">
@@ -227,7 +342,7 @@ tbody td.mono { font-family: var(--mono); } tbody td.hl { color: var(--text); fo
           <div class="stat-card green"><div class="stat-label">&#127771; Jantas</div><div class="stat-value" id="statJanta">—</div><div class="stat-sub" id="statJantaVal">—</div></div>
           <div class="stat-card red"><div class="stat-label">&#128230; Marmitas</div><div class="stat-value" id="statMarmita">—</div><div class="stat-sub" id="statMarmitaVal">—</div></div>
         </div>
-        <div class="grid-2">
+        <div class="grid-2 mb16">
           <div class="card">
             <div class="card-title">&#128176; Total Devido no Mês</div>
             <div style="font-family:var(--mono);font-size:36px;font-weight:600;color:var(--green)" id="totalMes">R$ —</div>
@@ -237,6 +352,14 @@ tbody td.mono { font-family: var(--mono); } tbody td.hl { color: var(--text); fo
             <div class="card-title">&#128203; Últimos Lançamentos</div>
             <div id="ultLancamentos"><div class="empty-state">Nenhum lançamento</div></div>
           </div>
+        </div>
+        <!-- Descontos do mês no dashboard -->
+        <div class="card mb16" id="dashDescontoCard">
+          <div class="card-title" style="justify-content:space-between">
+            <span>⛽ Descontos do Mês</span>
+            <button class="btn btn-teal btn-sm no-print" onclick="navTo('descontos', document.getElementById('navDescontos'))">Ver tudo</button>
+          </div>
+          <div id="dashDescontoResumo"><div class="empty-state">Nenhum desconto lançado</div></div>
         </div>
         <div class="card mt16">
           <div class="card-title">&#127970; Total por Empresa (mês atual)</div>
@@ -303,6 +426,48 @@ tbody td.mono { font-family: var(--mono); } tbody td.hl { color: var(--text); fo
         </div>
       </div>
 
+      <!-- ═══════════════════════════ DESCONTOS ═══════════════════════════ -->
+      <div class="page" id="page-descontos">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Descontos para Medição</div>
+            <div class="section-sub">Diesel e outros itens a descontar das medições por empresa</div>
+          </div>
+          <div class="flex-gap no-print">
+            <input type="month" id="descFiltroMes" onchange="carregarDescontos()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:var(--sans);font-size:13px;padding:7px 12px;outline:none;">
+            <button class="btn btn-ghost" onclick="window.print()">&#128424; Imprimir</button>
+            <button class="btn btn-teal" onclick="openModalDesconto()">&#10133; Novo Desconto</button>
+          </div>
+        </div>
+
+        <!-- Banner total descontos -->
+        <div class="impacto-banner" id="descBanner" style="display:none">
+          <div>
+            <div class="impacto-banner-label">⛽ Total de Descontos no Mês</div>
+            <div style="font-size:12px;color:var(--text3)" id="descBannerSub"></div>
+          </div>
+          <div class="impacto-banner-val" id="descBannerVal">R$ 0,00</div>
+        </div>
+
+        <!-- Resumo por empresa -->
+        <div class="section-title" style="font-size:15px;margin-bottom:12px;color:var(--text2)">Resumo por Empresa</div>
+        <div class="grid-3 mb16" id="descEmpresasResumoGrid">
+          <div class="empty-state" style="grid-column:1/-1">Nenhum desconto lançado neste mês</div>
+        </div>
+
+        <!-- Lista detalhada -->
+        <div class="card">
+          <div class="card-title" style="justify-content:space-between">
+            <span>📋 Todos os Lançamentos</span>
+            <select id="descFiltroEmpresa" onchange="renderDescList()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:var(--sans);font-size:12px;padding:5px 10px;outline:none;">
+              <option value="">Todas as empresas</option>
+            </select>
+          </div>
+          <div class="table-wrap" id="descListWrap"><div class="empty-state">Nenhum desconto lançado</div></div>
+        </div>
+      </div>
+      <!-- ════════════════════════════════════════════════════════════════ -->
+
       <!-- PREÇOS -->
       <div class="page" id="page-precos">
         <div class="section-header">
@@ -363,6 +528,8 @@ let empresas = [];
 let precos = { cafe: 11, almoco: 25, janta: 25, marmita_almoco: 23.5, marmita_janta: 23.5, taxa_entrega: 32.5, taxa_obra: 10, taxa_cidade: 10 };
 let calAtual = new Date();
 let dadosCal = {};
+let descontosTipo = 'diesel';
+let descontosCache = {}; // mesStr -> array
 
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DIAS  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -387,15 +554,19 @@ function updateSidebarFooter() {
 
 function navTo(page, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('active'); n.classList.remove('teal-nav'); });
   document.getElementById('page-' + page).classList.add('active');
-  if (el) el.classList.add('active');
-  const titles = { dashboard:'Dashboard', calendario:'Calendário', historico:'Histórico', resumo:'Resumo por Empresa', precos:'Preços', empresas:'Empresas' };
+  if (el) {
+    el.classList.add('active');
+    if (page === 'descontos') el.classList.add('teal-nav');
+  }
+  const titles = { dashboard:'Dashboard', calendario:'Calendário', historico:'Histórico', resumo:'Resumo por Empresa', descontos:'Descontos para Medição', precos:'Preços', empresas:'Empresas' };
   document.getElementById('topbarTitle').textContent = titles[page] || page;
   if (page === 'historico') { popularSelectEmpresas(); carregarHistorico(); }
   if (page === 'resumo') carregarResumoEmpresas();
   if (page === 'calendario') renderCalendario();
   if (page === 'dashboard') renderDashboard();
+  if (page === 'descontos') { popularSelectDescEmpresas(); carregarDescontos(); }
 }
 
 async function fsSet(col, id, dados) { const {doc,setDoc}=firestoreFns; await setDoc(doc(db,col,id),dados); }
@@ -426,6 +597,19 @@ function popularSelectEmpresas() {
   empresas.forEach(e => { const o=document.createElement('option'); o.value=e.nome; o.textContent=e.nome; sel.appendChild(o); });
   if (atual && empresas.find(e=>e.nome===atual)) sel.value = atual;
   document.getElementById('btnImprimirEmpresa').style.display = sel.value ? 'inline-flex' : 'none';
+}
+
+function popularSelectDescEmpresas() {
+  const sel = document.getElementById('descFiltroEmpresa');
+  const sel2 = document.getElementById('descEmpresa');
+  const atual = sel.value;
+  sel.innerHTML = '<option value="">Todas as empresas</option>';
+  if (sel2) sel2.innerHTML = '';
+  empresas.forEach(e => {
+    const o = document.createElement('option'); o.value=e.nome; o.textContent=e.nome; sel.appendChild(o);
+    if (sel2) { const o2=document.createElement('option'); o2.value=e.nome; o2.textContent=e.nome; sel2.appendChild(o2); }
+  });
+  if (atual && empresas.find(e=>e.nome===atual)) sel.value = atual;
 }
 
 function onFiltroEmpresaChange() {
@@ -468,6 +652,358 @@ async function salvarPrecos() {
   await fsSet('alimentacao_config','precos',precos); toast('Preços salvos!','success');
 }
 
+// ══════════════════════════════════════════
+//  MODAL DESCONTOS
+// ══════════════════════════════════════════
+function openModalDesconto() {
+  const now = new Date().toISOString().slice(0,10);
+  document.getElementById('descData').value = now;
+  document.getElementById('descLitros').value = '';
+  document.getElementById('descValorLitro').value = '';
+  document.getElementById('descDieselTotal').textContent = 'R$ 0,00';
+  document.getElementById('descDieselFormula').textContent = '— litros × R$ —';
+  document.getElementById('descOutroDescricao').value = '';
+  document.getElementById('descOutroValor').value = '';
+  document.getElementById('descObs').value = '';
+  popularSelectDescEmpresas();
+  setDescTipo('diesel');
+  document.getElementById('modalDescontoTitle').textContent = 'Novo Desconto';
+  document.getElementById('modalDesconto').classList.add('open');
+}
+function closeModalDesconto() { document.getElementById('modalDesconto').classList.remove('open'); }
+
+function setDescTipo(tipo) {
+  descontosTipo = tipo;
+  document.getElementById('tabDiesel').classList.toggle('active', tipo==='diesel');
+  document.getElementById('tabOutro').classList.toggle('active', tipo==='outro');
+  document.getElementById('camposDiesel').style.display = tipo==='diesel' ? 'block' : 'none';
+  document.getElementById('camposOutro').style.display = tipo==='outro' ? 'block' : 'none';
+}
+
+function calcDiesel() {
+  const litros = parseFloat(document.getElementById('descLitros').value) || 0;
+  const vlLitro = parseFloat(document.getElementById('descValorLitro').value) || 0;
+  const total = litros * vlLitro;
+  document.getElementById('descDieselTotal').textContent = 'R$ ' + fmtNum(total);
+  document.getElementById('descDieselFormula').textContent = fmtNum(litros) + ' L × R$ ' + fmtNum(vlLitro);
+}
+
+async function salvarDesconto() {
+  const empresa = document.getElementById('descEmpresa').value;
+  const data = document.getElementById('descData').value;
+  if (!empresa) { toast('Selecione a empresa','error'); return; }
+  if (!data) { toast('Informe a data','error'); return; }
+
+  let valor = 0, descricao = '', litros = 0, vlLitro = 0;
+
+  if (descontosTipo === 'diesel') {
+    litros = parseFloat(document.getElementById('descLitros').value) || 0;
+    vlLitro = parseFloat(document.getElementById('descValorLitro').value) || 0;
+    valor = litros * vlLitro;
+    descricao = 'Diesel — ' + fmtNum(litros) + ' L × R$ ' + fmtNum(vlLitro);
+    if (!litros || !vlLitro) { toast('Informe litros e valor por litro','error'); return; }
+  } else {
+    descricao = document.getElementById('descOutroDescricao').value.trim();
+    valor = parseFloat(document.getElementById('descOutroValor').value) || 0;
+    if (!descricao) { toast('Informe a descrição','error'); return; }
+    if (!valor) { toast('Informe o valor','error'); return; }
+  }
+
+  const obs = document.getElementById('descObs').value.trim();
+  const id = 'desc_' + Date.now();
+  const mes = data.slice(0,7);
+  const registro = { id, empresa, data, tipo: descontosTipo, descricao, valor, litros, vlLitro, obs, criadoEm: new Date().toISOString() };
+  await fsSet('alimentacao_descontos', id, registro);
+  descontosCache = {}; // invalida cache
+  closeModalDesconto();
+  toast('Desconto salvo!','success');
+  await carregarDescontos();
+  renderDashboard();
+}
+
+async function deletarDesconto(id) {
+  if (!confirm('Excluir este desconto?')) return;
+  await fsDel('alimentacao_descontos', id);
+  descontosCache = {};
+  await carregarDescontos();
+  renderDashboard();
+  toast('Desconto excluído','success');
+}
+
+async function getDescontosMes(mesStr) {
+  if (descontosCache[mesStr]) return descontosCache[mesStr];
+  const all = await fsGetAll('alimentacao_descontos');
+  const f = all.filter(d => d.data && d.data.startsWith(mesStr));
+  descontosCache[mesStr] = f;
+  return f;
+}
+
+async function carregarDescontos() {
+  const mesEl = document.getElementById('descFiltroMes');
+  const mes = mesEl ? mesEl.value : mesAtual();
+  if (!mes) return;
+  const descontos = await getDescontosMes(mes);
+  const [ano, m] = mes.split('-');
+
+  // Banner total
+  const banner = document.getElementById('descBanner');
+  const totalGeral = descontos.reduce((s,d)=>s+d.valor,0);
+  if (totalGeral > 0) {
+    banner.style.display = 'flex';
+    document.getElementById('descBannerVal').textContent = 'R$ ' + fmtNum(totalGeral);
+    document.getElementById('descBannerSub').textContent = descontos.length + ' lançamento(s) — ' + MESES[parseInt(m)-1] + ' ' + ano;
+  } else {
+    banner.style.display = 'none';
+  }
+
+  // Resumo por empresa
+  const pe = {};
+  for (const d of descontos) {
+    if (!pe[d.empresa]) pe[d.empresa] = { diesel: 0, outro: 0, litros: 0, itens: [] };
+    if (d.tipo === 'diesel') { pe[d.empresa].diesel += d.valor; pe[d.empresa].litros += d.litros||0; }
+    else pe[d.empresa].outro += d.valor;
+    pe[d.empresa].itens.push(d);
+  }
+  const grid = document.getElementById('descEmpresasResumoGrid');
+  if (!Object.keys(pe).length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Nenhum desconto lançado neste mês</div>';
+  } else {
+    grid.innerHTML = Object.entries(pe).map(([emp, v]) => {
+      const tot = v.diesel + v.outro;
+      return '<div class="desc-empresa-resumo">'
+        + '<div class="desc-empresa-resumo-header"><div style="font-size:13px;font-weight:600">'+emp+'</div><div style="font-family:var(--mono);font-size:15px;font-weight:600;color:var(--teal)">R$ '+fmtNum(tot)+'</div></div>'
+        + '<div class="desc-empresa-resumo-body">'
+        + (v.diesel ? '<div class="desc-detalhe-row"><span style="color:var(--text2)">⛽ Diesel</span><span style="font-family:var(--mono);font-size:12px"><span style="color:var(--text3)">'+fmtNum(v.litros)+' L —</span> <strong style="color:var(--teal)">R$ '+fmtNum(v.diesel)+'</strong></span></div>' : '')
+        + (v.outro ? '<div class="desc-detalhe-row"><span style="color:var(--text2)">📋 Outros</span><span style="font-family:var(--mono);font-size:12px;color:var(--amber)">R$ '+fmtNum(v.outro)+'</span></div>' : '')
+        + '<div style="margin-top:8px;font-size:11px;color:var(--text3)">'+v.itens.length+' lançamento(s)</div>'
+        + '</div></div>';
+    }).join('');
+  }
+
+  renderDescList(descontos);
+}
+
+function renderDescList(descontos) {
+  // pode ser chamada sem argumento (usa cache do DOM)
+  const filtroEl = document.getElementById('descFiltroEmpresa');
+  const ef = filtroEl ? filtroEl.value : '';
+  const mesEl = document.getElementById('descFiltroMes');
+  const mes = mesEl ? mesEl.value : mesAtual();
+
+  // usa descontos passados ou busca do cache
+  const lista = descontos || descontosCache[mes] || [];
+  const filtrado = ef ? lista.filter(d=>d.empresa===ef) : lista;
+  const sorted = [...filtrado].sort((a,b)=>b.data.localeCompare(a.data));
+
+  const wrap = document.getElementById('descListWrap');
+  if (!sorted.length) { wrap.innerHTML='<div class="empty-state">Nenhum lançamento encontrado</div>'; return; }
+
+  let rows = '';
+  for (const d of sorted) {
+    rows += '<tr>'
+      + '<td class="mono">'+fmtData(d.data)+'</td>'
+      + '<td class="hl">'+d.empresa+'</td>'
+      + '<td><span class="badge '+(d.tipo==='diesel'?'badge-teal tipo-diesel':'badge-amber tipo-outro')+'">'+(d.tipo==='diesel'?'⛽ Diesel':'📋 Outro')+'</span></td>'
+      + '<td style="color:var(--text)">'+d.descricao+'</td>'
+      + '<td class="mono" style="color:var(--teal);font-weight:600">R$ '+fmtNum(d.valor)+'</td>'
+      + '<td style="font-size:11px;color:var(--text3)">'+( d.obs||'—')+'</td>'
+      + '<td class="no-print"><button class="btn btn-danger btn-sm" onclick="deletarDesconto(\''+d.id+'\')">✕</button></td>'
+      + '</tr>';
+  }
+  wrap.innerHTML = '<table><thead><tr><th>Data</th><th>Empresa</th><th>Tipo</th><th>Descrição</th><th>Valor</th><th>Obs</th><th class="no-print"></th></tr></thead><tbody>'+rows+'</tbody></table>';
+}
+
+// ══════════════════════════════════════════
+//  DASHBOARD com resumo de descontos
+// ══════════════════════════════════════════
+async function renderDashboard() {
+  const now = new Date();
+  const mes = mesAtual();
+  document.getElementById('dashMesSub').textContent = MESES[now.getMonth()]+' '+now.getFullYear();
+  document.getElementById('topbarMeta').textContent = now.toLocaleDateString('pt-BR');
+
+  const lancs = await getLancamentosMes(mes);
+  let tc=0,ta=0,tj=0,tm=0; const pe={};
+  for (const l of lancs) {
+    for (const [nome,d] of Object.entries(l.empresas||{})) {
+      tc+=d.cafe||0; ta+=d.almoco||0; tj+=d.janta||0; tm+=d.marmita||0;
+      const pag=d.pagador||nome; if(!pe[pag])pe[pag]={cafe:0,almoco:0,janta:0,marmita:0};
+      pe[pag].cafe+=d.cafe||0; pe[pag].almoco+=d.almoco||0; pe[pag].janta+=d.janta||0; pe[pag].marmita+=d.marmita||0;
+    }
+  }
+  const vc=tc*precos.cafe,va=ta*precos.almoco,vj=tj*precos.janta,vm=tm*precos.marmita_almoco,tot=vc+va+vj+vm;
+  document.getElementById('statCafe').textContent=tc; document.getElementById('statAlmoco').textContent=ta;
+  document.getElementById('statJanta').textContent=tj; document.getElementById('statMarmita').textContent=tm;
+  document.getElementById('statCafeVal').textContent='R$ '+fmtNum(vc); document.getElementById('statAlmocoVal').textContent='R$ '+fmtNum(va);
+  document.getElementById('statJantaVal').textContent='R$ '+fmtNum(vj); document.getElementById('statMarmitaVal').textContent='R$ '+fmtNum(vm);
+  document.getElementById('totalMes').textContent='R$ '+fmtNum(tot);
+  document.getElementById('totalMesSub').textContent=lancs.length+' dias com lançamento';
+
+  const ult=[...lancs].sort((a,b)=>b.data.localeCompare(a.data)).slice(0,5);
+  const ultEl=document.getElementById('ultLancamentos');
+  ultEl.innerHTML=ult.length?ult.map(l=>{let a=0,b=0,c=0,dd=0;for(const d of Object.values(l.empresas||{})){a+=d.cafe||0;b+=d.almoco||0;c+=d.janta||0;dd+=d.marmita||0;}return'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;"><div style="font-weight:500;color:var(--text)">'+fmtData(l.data)+'</div><div style="display:flex;gap:8px;">'+(a?'<span class="badge badge-amber">☕'+a+'</span>':'')+(b?'<span class="badge badge-blue">🍽'+b+'</span>':'')+(c?'<span class="badge badge-green">🌙'+c+'</span>':'')+(dd?'<span style="font-family:var(--mono);font-size:11px;padding:2px 6px;background:var(--purple-dim);color:var(--purple);border-radius:4px">📦'+dd+'</span>':'')+'</div></div>';}).join(''):'<div class="empty-state">Nenhum lançamento este mês</div>';
+
+  // Descontos mini-resumo no dashboard
+  const descontos = await getDescontosMes(mes);
+  const dashDescEl = document.getElementById('dashDescontoResumo');
+  if (descontos.length) {
+    const pe2 = {};
+    for (const d of descontos) {
+      if (!pe2[d.empresa]) pe2[d.empresa] = { diesel:0, outro:0 };
+      if (d.tipo==='diesel') pe2[d.empresa].diesel += d.valor;
+      else pe2[d.empresa].outro += d.valor;
+    }
+    const totalDesc = descontos.reduce((s,d)=>s+d.valor,0);
+    dashDescEl.innerHTML = '<div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:13px;">'
+      + '<span style="color:var(--text3)">'+descontos.length+' lançamento(s)</span>'
+      + '<span style="font-family:var(--mono);font-weight:600;color:var(--teal)">Total: R$ '+fmtNum(totalDesc)+'</span></div>'
+      + Object.entries(pe2).map(([emp,v])=>'<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;">'
+        + '<span style="color:var(--text)">'+emp+'</span>'
+        + '<span style="font-family:var(--mono);color:var(--teal)">R$ '+fmtNum(v.diesel+v.outro)+'</span></div>').join('');
+  } else {
+    dashDescEl.innerHTML = '<div class="empty-state" style="padding:16px">Nenhum desconto lançado este mês</div>';
+  }
+
+  // Tabela empresas mês
+  const tbl=document.getElementById('tabelaEmpresasMes');
+  tbl.innerHTML=Object.keys(pe).length?'<table><thead><tr><th>Pagador</th><th>☕</th><th>🍽</th><th>🌙</th><th>📦</th><th>Total R$</th></tr></thead><tbody>'+Object.entries(pe).map(([p,d])=>{const t=d.cafe*precos.cafe+d.almoco*precos.almoco+d.janta*precos.janta+d.marmita*precos.marmita_almoco;return'<tr><td class="hl">'+p+'</td><td class="mono">'+(d.cafe||'—')+'</td><td class="mono">'+(d.almoco||'—')+'</td><td class="mono">'+(d.janta||'—')+'</td><td class="mono">'+(d.marmita||'—')+'</td><td class="mono" style="color:var(--green);font-weight:600">R$ '+fmtNum(t)+'</td></tr>';}).join('')+'</tbody></table>':'<div class="empty-state">Nenhum dado este mês</div>';
+}
+
+async function renderCalendario() {
+  const ano=calAtual.getFullYear(), mes=calAtual.getMonth();
+  document.getElementById('calMonthTitle').textContent=MESES[mes]+' '+ano;
+  const mesStr=ano+'-'+String(mes+1).padStart(2,'0');
+  const lancs=await getLancamentosMes(mesStr);
+  const pd={};
+  for(const l of lancs){let tc=0,ta=0,tj=0,tm=0;for(const d of Object.values(l.empresas||{})){tc+=d.cafe||0;ta+=d.almoco||0;tj+=d.janta||0;tm+=d.marmita||0;}pd[l.data]={cafe:tc,almoco:ta,janta:tj,marmita:tm};}
+  const grid=document.getElementById('calGrid'); grid.innerHTML='';
+  DIAS.forEach(d=>{const el=document.createElement('div');el.className='cal-dow';el.textContent=d;grid.appendChild(el);});
+  const pd1=new Date(ano,mes,1).getDay();
+  for(let i=0;i<pd1;i++){const el=document.createElement('div');el.className='cal-day empty';grid.appendChild(el);}
+  const dm=new Date(ano,mes+1,0).getDate(), hoje=new Date().toISOString().slice(0,10);
+  for(let d=1;d<=dm;d++){
+    const ds=ano+'-'+String(mes+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'), dd=pd[ds]||null;
+    const el=document.createElement('div');
+    el.className='cal-day'+(ds===hoje?' today':'')+(dd?' has-data':'');
+    el.innerHTML='<div class="cal-day-num">'+d+'</div><div class="cal-chips">'+(dd?.cafe?'<span class="cal-chip cafe">☕'+dd.cafe+'</span>':'')+(dd?.almoco?'<span class="cal-chip almoco">🍽'+dd.almoco+'</span>':'')+(dd?.janta?'<span class="cal-chip janta">🌙'+dd.janta+'</span>':'')+(dd?.marmita?'<span class="cal-chip marmita">📦'+dd.marmita+'</span>':'')+'</div>';
+    el.onclick=()=>openLancamento(ds); grid.appendChild(el);
+  }
+}
+function calMes(d){calAtual.setMonth(calAtual.getMonth()+d);renderCalendario();}
+
+function initFiltroMes() {
+  const val = mesAtual();
+  document.getElementById('filtroMes').value=val;
+  document.getElementById('resumoMesFiltro').value=val;
+  document.getElementById('descFiltroMes').value=val;
+}
+
+async function carregarHistorico() {
+  const mes=document.getElementById('filtroMes').value;
+  const ef=document.getElementById('filtroEmpresa')?.value||'';
+  if(!mes)return;
+  const lancs=await getLancamentosMes(mes);
+  const tbl=document.getElementById('tabelaHistorico');
+  if(!lancs.length){tbl.innerHTML='<div class="empty-state">Nenhum lançamento neste mês</div>';return;}
+  const sorted=[...lancs].sort((a,b)=>b.data.localeCompare(a.data));
+  let rows='',tc=0,ta=0,tj=0,tm=0,gt=0;
+  for(const l of sorted){
+    for(const [nome,d] of Object.entries(l.empresas||{})){
+      if(ef && nome!==ef)continue;
+      const tot=(d.cafe||0)*precos.cafe+(d.almoco||0)*precos.almoco+(d.janta||0)*precos.janta+(d.marmita||0)*precos.marmita_almoco;
+      tc+=d.cafe||0;ta+=d.almoco||0;tj+=d.janta||0;tm+=d.marmita||0;gt+=tot;
+      rows+='<tr><td class="mono">'+fmtData(l.data)+'</td><td class="hl">'+nome+'</td><td><span class="badge badge-blue">'+(d.pagador||nome)+'</span></td><td class="mono">'+(d.cafe||'—')+'</td><td class="mono">'+(d.almoco||'—')+'</td><td class="mono">'+(d.janta||'—')+'</td><td class="mono">'+(d.marmita||'—')+'</td><td class="mono" style="color:var(--green)">R$ '+fmtNum(tot)+'</td><td class="no-print"><button class="btn btn-ghost btn-sm" onclick="openLancamento(\''+l.data+'\')">&#9999;&#65039;</button></td></tr>';
+    }
+  }
+  if(!rows){tbl.innerHTML='<div class="empty-state">Nenhum lançamento para esta empresa neste mês</div>';return;}
+  const totalRow='<tr style="background:var(--surface2);font-weight:600;"><td colspan="3" style="color:var(--text2);font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;">TOTAL DO PERÍODO</td><td class="mono" style="color:var(--amber)">'+(tc||'—')+'</td><td class="mono" style="color:var(--accent2)">'+(ta||'—')+'</td><td class="mono" style="color:var(--green)">'+(tj||'—')+'</td><td class="mono" style="color:var(--purple)">'+(tm||'—')+'</td><td class="mono" style="color:var(--green);font-size:14px">R$ '+fmtNum(gt)+'</td><td class="no-print"></td></tr>';
+  tbl.innerHTML='<table><thead><tr><th>Data</th><th>Empresa</th><th>Pagador</th><th>☕ Café</th><th>🍽 Almoço</th><th>🌙 Janta</th><th>📦 Marmita</th><th>Total</th><th class="no-print">Ação</th></tr></thead><tbody>'+rows+totalRow+'</tbody></table>';
+}
+
+async function imprimirPorEmpresa() {
+  const mes = document.getElementById('filtroMes').value;
+  const empresa = document.getElementById('filtroEmpresa').value;
+  if (!empresa) { toast('Selecione uma empresa primeiro', 'error'); return; }
+  const lancs = await getLancamentosMes(mes);
+  const descontos = await getDescontosMes(mes);
+  const [ano, m] = mes.split('-');
+  const mesNome = MESES[parseInt(m)-1] + ' ' + ano;
+  const sorted = [...lancs].filter(l => l.empresas && l.empresas[empresa]).sort((a,b) => a.data.localeCompare(b.data));
+  if (!sorted.length) { toast('Nenhum lançamento para ' + empresa + ' neste mês', 'error'); return; }
+  let rows = '', tc=0, ta=0, tj=0, tm=0, gt=0;
+  for (const l of sorted) {
+    const d = l.empresas[empresa];
+    const tot = (d.cafe||0)*precos.cafe + (d.almoco||0)*precos.almoco + (d.janta||0)*precos.janta + (d.marmita||0)*precos.marmita_almoco;
+    tc+=d.cafe||0; ta+=d.almoco||0; tj+=d.janta||0; tm+=d.marmita||0; gt+=tot;
+    rows += '<tr><td>'+fmtData(l.data)+'</td><td>'+(d.pagador||empresa)+'</td><td class="c">'+(d.cafe||'—')+'</td><td class="c">'+(d.almoco||'—')+'</td><td class="c">'+(d.janta||'—')+'</td><td class="c">'+(d.marmita||'—')+'</td><td class="r val">R$ '+fmtNum(tot)+'</td></tr>';
+  }
+
+  const descEmpresa = descontos.filter(d => d.empresa === empresa);
+  const totalDescontos = descEmpresa.reduce((s,d)=>s+d.valor,0);
+  let descRows = '';
+  for (const d of descEmpresa.sort((a,b)=>a.data.localeCompare(b.data))) {
+    descRows += '<tr><td>'+fmtData(d.data)+'</td><td>'+(d.tipo==='diesel'?'⛽ Diesel':'📋 Outro')+'</td><td>'+d.descricao+'</td><td class="r val" style="color:#b04000">R$ '+fmtNum(d.valor)+'</td></tr>';
+  }
+
+  const emit = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR');
+  const html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Relatório '+empresa+' — '+mesNome+'</title><style>'
+    + '*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:12px;color:#1a1a1a;padding:28px}'
+    + '.hdr{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #1a3a6e;padding-bottom:14px;margin-bottom:20px}'
+    + '.hdr h1{font-size:16px;color:#1a3a6e;margin-bottom:6px}.tag{display:inline-block;background:#1a3a6e;color:#fff;padding:3px 12px;border-radius:4px;font-size:13px;font-weight:bold;margin-bottom:4px}'
+    + '.periodo{font-size:12px;color:#555}.emit{font-size:10px;color:#999;text-align:right}'
+    + '.resumo{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px}'
+    + '.res-item{border:1px solid #dde;border-radius:6px;padding:10px 16px;min-width:110px}'
+    + '.res-item .lb{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}'
+    + '.res-item .vl{font-size:20px;font-weight:bold;color:#1a3a6e;font-family:monospace}'
+    + '.res-item.dest .vl{color:#1a6e3a}.res-item.desc-tot .vl{color:#b04000}'
+    + 'table{width:100%;border-collapse:collapse;margin-bottom:24px}'
+    + 'thead th{background:#1a3a6e;color:#fff;padding:9px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em}'
+    + 'thead th.c{text-align:center}thead th.r{text-align:right}'
+    + 'tbody tr{border-bottom:1px solid #e0e0e0}tbody tr:nth-child(even){background:#f7f9fc}'
+    + 'tbody td{padding:8px 10px}tbody td.c{text-align:center}tbody td.r{text-align:right}'
+    + 'tbody td.val{font-weight:600;color:#1a6e3a;font-family:monospace}'
+    + '.tot-row{background:#e8f0fe!important;font-weight:bold;border-top:2px solid #1a3a6e}'
+    + '.tot-row td{padding:10px;font-size:13px}'
+    + '.sec-title{font-size:14px;font-weight:bold;color:#1a3a6e;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #1a3a6e}'
+    + '.ftr{margin-top:22px;font-size:10px;color:#aaa;display:flex;justify-content:space-between;border-top:1px solid #eee;padding-top:10px}'
+    + '@media print{body{padding:14px}}</style></head><body>'
+    + '<div class="hdr"><div><h1>Controle de Alimentação — PCH Lebon Regis</h1><div class="tag">'+empresa+'</div><div class="periodo">Período: <strong>'+mesNome+'</strong></div></div><div class="emit">Emitido em: '+emit+'</div></div>'
+    + '<div class="resumo"><div class="res-item"><div class="lb">☕ Cafés</div><div class="vl">'+tc+'</div></div><div class="res-item"><div class="lb">🍽 Almoços</div><div class="vl">'+ta+'</div></div><div class="res-item"><div class="lb">🌙 Jantas</div><div class="vl">'+tj+'</div></div><div class="res-item"><div class="lb">📦 Marmitas</div><div class="vl">'+tm+'</div></div><div class="res-item dest"><div class="lb">💰 Total Refeições</div><div class="vl">R$ '+fmtNum(gt)+'</div></div>'+(totalDescontos?'<div class="res-item desc-tot"><div class="lb">⛽ Total Descontos</div><div class="vl">R$ '+fmtNum(totalDescontos)+'</div></div><div class="res-item dest"><div class="lb">✅ Líquido</div><div class="vl">R$ '+fmtNum(gt+totalDescontos)+'</div></div>':'')+'</div>'
+    + '<div class="sec-title">Refeições</div>'
+    + '<table><thead><tr><th>Data</th><th>Pagador</th><th class="c">☕</th><th class="c">🍽</th><th class="c">🌙</th><th class="c">📦</th><th class="r">Total</th></tr></thead><tbody>'+rows
+    + '<tr class="tot-row"><td colspan="2">TOTAL</td><td class="c">'+(tc||'—')+'</td><td class="c">'+(ta||'—')+'</td><td class="c">'+(tj||'—')+'</td><td class="c">'+(tm||'—')+'</td><td class="r val">R$ '+fmtNum(gt)+'</td></tr></tbody></table>'
+    + (descRows ? '<div class="sec-title">Descontos</div><table><thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th class="r">Valor</th></tr></thead><tbody>'+descRows+'<tr class="tot-row"><td colspan="3">TOTAL DESCONTOS</td><td class="r" style="color:#b04000;font-family:monospace">R$ '+fmtNum(totalDescontos)+'</td></tr></tbody></table>' : '')
+    + '<div class="ftr"><span>BUCAGRANS Construtora de Obras S.A. — PCH Lebon Regis</span><span>'+empresa+' | '+mesNome+'</span></div></body></html>';
+
+  const win = window.open('', '_blank', 'width=960,height=720');
+  win.document.open(); win.document.write(html); win.document.close();
+  setTimeout(() => win.print(), 800);
+}
+
+async function carregarResumoEmpresas() {
+  const mes=document.getElementById('resumoMesFiltro').value; if(!mes)return;
+  const [ano,m]=mes.split('-'); document.getElementById('resumoMesSub').textContent=MESES[parseInt(m)-1]+' '+ano;
+  const lancs=await getLancamentosMes(mes); const pp={};
+  for(const l of lancs){for(const [nome,d] of Object.entries(l.empresas||{})){const pag=d.pagador||nome;if(!pp[pag])pp[pag]={cafe:0,almoco:0,janta:0,marmita:0,empresas:new Set()};pp[pag].cafe+=d.cafe||0;pp[pag].almoco+=d.almoco||0;pp[pag].janta+=d.janta||0;pp[pag].marmita+=d.marmita||0;pp[pag].empresas.add(nome);}}
+  const grid=document.getElementById('resumoEmpresasGrid'), card=document.getElementById('resumoTotaisCard');
+  if(!Object.keys(pp).length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1">Nenhum dado neste mês</div>';card.style.display='none';return;}
+  card.style.display='block'; let gt=0, tr='';
+  grid.innerHTML=Object.entries(pp).map(([pag,d])=>{
+    const tc=d.cafe*precos.cafe,ta=d.almoco*precos.almoco,tj=d.janta*precos.janta,tm=d.marmita*precos.marmita_almoco,tot=tc+ta+tj+tm;
+    gt+=tot;
+    tr+='<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;"><span style="font-weight:600;color:var(--text)">'+pag+'</span><span style="font-family:var(--mono);color:var(--green)">R$ '+fmtNum(tot)+'</span></div>';
+    return '<div class="empresa-card"><div class="empresa-card-header"><div class="empresa-card-name">'+pag+'</div><div class="empresa-card-total">R$ '+fmtNum(tot)+'</div></div><div class="empresa-card-body">'+(d.cafe?mkMealRow('☕ Café da Manhã',d.cafe,precos.cafe,tc):'')+(d.almoco?mkMealRow('🍽 Almoço',d.almoco,precos.almoco,ta):'')+(d.janta?mkMealRow('🌙 Jantar',d.janta,precos.janta,tj):'')+(d.marmita?mkMealRow('📦 Marmita',d.marmita,precos.marmita_almoco,tm):'')+'<div style="margin-top:8px;font-size:11px;color:var(--text3)">Empresas: '+[...d.empresas].join(', ')+'</div></div></div>';
+  }).join('');
+  document.getElementById('resumoTotaisBody').innerHTML=tr+'<div style="display:flex;justify-content:space-between;padding:10px 0;font-size:15px;font-weight:600;margin-top:4px;"><span style="color:var(--text)">TOTAL GERAL</span><span style="font-family:var(--mono);color:var(--green)">R$ '+fmtNum(gt)+'</span></div>';
+}
+
+function mkMealRow(label,qtd,preco,total){return'<div class="empresa-meal-row"><span style="color:var(--text2)">'+label+'</span><span style="font-family:var(--mono);font-size:11px;color:var(--text3)">'+qtd+' x R$'+precos_fmt(preco)+' = <strong style="color:var(--text)">R$ '+fmtNum(total)+'</strong></span></div>';}
+
+async function getLancamentosMes(mesStr){if(dadosCal[mesStr])return dadosCal[mesStr];const all=await fsGetAll('alimentacao_lancamentos');const f=all.filter(l=>l.data&&l.data.startsWith(mesStr));dadosCal[mesStr]=f;return f;}
+
+// ══════════════════════════════════════════
+//  MODAL REFEIÇÕES
+// ══════════════════════════════════════════
 function openLancamento(data) {
   const dataInput = document.getElementById('lancData');
   dataInput.value = data || new Date().toISOString().slice(0,10);
@@ -508,182 +1044,10 @@ async function salvarLancamento() {
   if (document.getElementById('page-calendario').classList.contains('active')) renderCalendario();
 }
 
-async function renderDashboard() {
-  const now = new Date();
-  const mes = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
-  document.getElementById('dashMesSub').textContent = MESES[now.getMonth()]+' '+now.getFullYear();
-  document.getElementById('topbarMeta').textContent = now.toLocaleDateString('pt-BR');
-  const lancs = await getLancamentosMes(mes);
-  let tc=0,ta=0,tj=0,tm=0; const pe={};
-  for (const l of lancs) {
-    for (const [nome,d] of Object.entries(l.empresas||{})) {
-      tc+=d.cafe||0; ta+=d.almoco||0; tj+=d.janta||0; tm+=d.marmita||0;
-      const pag=d.pagador||nome; if(!pe[pag])pe[pag]={cafe:0,almoco:0,janta:0,marmita:0};
-      pe[pag].cafe+=d.cafe||0; pe[pag].almoco+=d.almoco||0; pe[pag].janta+=d.janta||0; pe[pag].marmita+=d.marmita||0;
-    }
-  }
-  const vc=tc*precos.cafe,va=ta*precos.almoco,vj=tj*precos.janta,vm=tm*precos.marmita_almoco,tot=vc+va+vj+vm;
-  document.getElementById('statCafe').textContent=tc; document.getElementById('statAlmoco').textContent=ta;
-  document.getElementById('statJanta').textContent=tj; document.getElementById('statMarmita').textContent=tm;
-  document.getElementById('statCafeVal').textContent='R$ '+fmtNum(vc); document.getElementById('statAlmocoVal').textContent='R$ '+fmtNum(va);
-  document.getElementById('statJantaVal').textContent='R$ '+fmtNum(vj); document.getElementById('statMarmitaVal').textContent='R$ '+fmtNum(vm);
-  document.getElementById('totalMes').textContent='R$ '+fmtNum(tot); document.getElementById('totalMesSub').textContent=lancs.length+' dias com lançamento';
-  const ult=[...lancs].sort((a,b)=>b.data.localeCompare(a.data)).slice(0,5);
-  const ultEl=document.getElementById('ultLancamentos');
-  ultEl.innerHTML=ult.length?ult.map(l=>{let a=0,b=0,c=0,dd=0;for(const d of Object.values(l.empresas||{})){a+=d.cafe||0;b+=d.almoco||0;c+=d.janta||0;dd+=d.marmita||0;}return'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;"><div style="font-weight:500;color:var(--text)">'+fmtData(l.data)+'</div><div style="display:flex;gap:8px;">'+(a?'<span class="badge badge-amber">☕'+a+'</span>':'')+(b?'<span class="badge badge-blue">🍽'+b+'</span>':'')+(c?'<span class="badge badge-green">🌙'+c+'</span>':'')+(dd?'<span style="font-family:var(--mono);font-size:11px;padding:2px 6px;background:rgba(200,120,255,0.12);color:#c878ff;border-radius:4px">📦'+dd+'</span>':'')+'</div></div>';}).join(''):'<div class="empty-state">Nenhum lançamento este mês</div>';
-  const tbl=document.getElementById('tabelaEmpresasMes');
-  tbl.innerHTML=Object.keys(pe).length?'<table><thead><tr><th>Pagador</th><th>☕</th><th>🍽</th><th>🌙</th><th>📦</th><th>Total R$</th></tr></thead><tbody>'+Object.entries(pe).map(([p,d])=>{const t=d.cafe*precos.cafe+d.almoco*precos.almoco+d.janta*precos.janta+d.marmita*precos.marmita_almoco;return'<tr><td class="hl">'+p+'</td><td class="mono">'+(d.cafe||'—')+'</td><td class="mono">'+(d.almoco||'—')+'</td><td class="mono">'+(d.janta||'—')+'</td><td class="mono">'+(d.marmita||'—')+'</td><td class="mono" style="color:var(--green);font-weight:600">R$ '+fmtNum(t)+'</td></tr>';}).join('')+'</tbody></table>':'<div class="empty-state">Nenhum dado este mês</div>';
-}
-
-async function renderCalendario() {
-  const ano=calAtual.getFullYear(), mes=calAtual.getMonth();
-  document.getElementById('calMonthTitle').textContent=MESES[mes]+' '+ano;
-  const mesStr=ano+'-'+String(mes+1).padStart(2,'0');
-  const lancs=await getLancamentosMes(mesStr);
-  const pd={};
-  for(const l of lancs){let tc=0,ta=0,tj=0,tm=0;for(const d of Object.values(l.empresas||{})){tc+=d.cafe||0;ta+=d.almoco||0;tj+=d.janta||0;tm+=d.marmita||0;}pd[l.data]={cafe:tc,almoco:ta,janta:tj,marmita:tm};}
-  const grid=document.getElementById('calGrid'); grid.innerHTML='';
-  DIAS.forEach(d=>{const el=document.createElement('div');el.className='cal-dow';el.textContent=d;grid.appendChild(el);});
-  const pd1=new Date(ano,mes,1).getDay();
-  for(let i=0;i<pd1;i++){const el=document.createElement('div');el.className='cal-day empty';grid.appendChild(el);}
-  const dm=new Date(ano,mes+1,0).getDate(), hoje=new Date().toISOString().slice(0,10);
-  for(let d=1;d<=dm;d++){
-    const ds=ano+'-'+String(mes+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'), dd=pd[ds]||null;
-    const el=document.createElement('div');
-    el.className='cal-day'+(ds===hoje?' today':'')+(dd?' has-data':'');
-    el.innerHTML='<div class="cal-day-num">'+d+'</div><div class="cal-chips">'+(dd?.cafe?'<span class="cal-chip cafe">☕'+dd.cafe+'</span>':'')+(dd?.almoco?'<span class="cal-chip almoco">🍽'+dd.almoco+'</span>':'')+(dd?.janta?'<span class="cal-chip janta">🌙'+dd.janta+'</span>':'')+(dd?.marmita?'<span class="cal-chip marmita">📦'+dd.marmita+'</span>':'')+'</div>';
-    el.onclick=()=>openLancamento(ds); grid.appendChild(el);
-  }
-}
-function calMes(d){calAtual.setMonth(calAtual.getMonth()+d);renderCalendario();}
-
-function initFiltroMes() {
-  const now=new Date(), val=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
-  document.getElementById('filtroMes').value=val;
-  document.getElementById('resumoMesFiltro').value=val;
-}
-
-async function carregarHistorico() {
-  const mes=document.getElementById('filtroMes').value;
-  const ef=document.getElementById('filtroEmpresa')?.value||'';
-  if(!mes)return;
-  const lancs=await getLancamentosMes(mes);
-  const tbl=document.getElementById('tabelaHistorico');
-  if(!lancs.length){tbl.innerHTML='<div class="empty-state">Nenhum lançamento neste mês</div>';return;}
-  const sorted=[...lancs].sort((a,b)=>b.data.localeCompare(a.data));
-  let rows='',tc=0,ta=0,tj=0,tm=0,gt=0;
-  for(const l of sorted){
-    for(const [nome,d] of Object.entries(l.empresas||{})){
-      if(ef && nome!==ef)continue;
-      const tot=(d.cafe||0)*precos.cafe+(d.almoco||0)*precos.almoco+(d.janta||0)*precos.janta+(d.marmita||0)*precos.marmita_almoco;
-      tc+=d.cafe||0;ta+=d.almoco||0;tj+=d.janta||0;tm+=d.marmita||0;gt+=tot;
-      rows+='<tr><td class="mono">'+fmtData(l.data)+'</td><td class="hl">'+nome+'</td><td><span class="badge badge-blue">'+(d.pagador||nome)+'</span></td><td class="mono">'+(d.cafe||'—')+'</td><td class="mono">'+(d.almoco||'—')+'</td><td class="mono">'+(d.janta||'—')+'</td><td class="mono">'+(d.marmita||'—')+'</td><td class="mono" style="color:var(--green)">R$ '+fmtNum(tot)+'</td><td class="no-print"><button class="btn btn-ghost btn-sm" onclick="openLancamento(\''+l.data+'\')">&#9999;&#65039;</button></td></tr>';
-    }
-  }
-  if(!rows){tbl.innerHTML='<div class="empty-state">Nenhum lançamento para esta empresa neste mês</div>';return;}
-  const totalRow='<tr style="background:var(--surface2);font-weight:600;"><td colspan="3" style="color:var(--text2);font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;">TOTAL DO PERÍODO</td><td class="mono" style="color:var(--amber)">'+(tc||'—')+'</td><td class="mono" style="color:var(--accent2)">'+(ta||'—')+'</td><td class="mono" style="color:var(--green)">'+(tj||'—')+'</td><td class="mono" style="color:#c878ff">'+(tm||'—')+'</td><td class="mono" style="color:var(--green);font-size:14px">R$ '+fmtNum(gt)+'</td><td class="no-print"></td></tr>';
-  tbl.innerHTML='<table><thead><tr><th>Data</th><th>Empresa</th><th>Pagador</th><th>☕ Café</th><th>🍽 Almoço</th><th>🌙 Janta</th><th>📦 Marmita</th><th>Total</th><th class="no-print">Ação</th></tr></thead><tbody>'+rows+totalRow+'</tbody></table>';
-}
-
-// ============================================================
-//  IMPRIMIR POR EMPRESA — relatório detalhado em nova janela
-// ============================================================
-async function imprimirPorEmpresa() {
-  const mes = document.getElementById('filtroMes').value;
-  const empresa = document.getElementById('filtroEmpresa').value;
-  if (!empresa) { toast('Selecione uma empresa primeiro', 'error'); return; }
-
-  const lancs = await getLancamentosMes(mes);
-  const [ano, m] = mes.split('-');
-  const mesNome = MESES[parseInt(m)-1] + ' ' + ano;
-
-  const sorted = [...lancs]
-    .filter(l => l.empresas && l.empresas[empresa])
-    .sort((a,b) => a.data.localeCompare(b.data));
-
-  if (!sorted.length) { toast('Nenhum lançamento para ' + empresa + ' neste mês', 'error'); return; }
-
-  let rows = '', tc=0, ta=0, tj=0, tm=0, gt=0;
-  for (const l of sorted) {
-    const d = l.empresas[empresa];
-    const tot = (d.cafe||0)*precos.cafe + (d.almoco||0)*precos.almoco + (d.janta||0)*precos.janta + (d.marmita||0)*precos.marmita_almoco;
-    tc+=d.cafe||0; ta+=d.almoco||0; tj+=d.janta||0; tm+=d.marmita||0; gt+=tot;
-    rows += '<tr><td>'+fmtData(l.data)+'</td><td>'+(d.pagador||empresa)+'</td>'
-      +'<td class="c">'+(d.cafe||'—')+'</td><td class="c">'+(d.almoco||'—')+'</td>'
-      +'<td class="c">'+(d.janta||'—')+'</td><td class="c">'+(d.marmita||'—')+'</td>'
-      +'<td class="r val">R$ '+fmtNum(tot)+'</td></tr>';
-  }
-
-  const emit = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR');
-
-  const html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">'
-    + '<title>Relatório '+empresa+' — '+mesNome+'</title><style>'
-    + '*{box-sizing:border-box;margin:0;padding:0}'
-    + 'body{font-family:Arial,sans-serif;font-size:12px;color:#1a1a1a;padding:28px}'
-    + '.hdr{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #1a3a6e;padding-bottom:14px;margin-bottom:20px}'
-    + '.hdr h1{font-size:16px;color:#1a3a6e;margin-bottom:6px}'
-    + '.tag{display:inline-block;background:#1a3a6e;color:#fff;padding:3px 12px;border-radius:4px;font-size:13px;font-weight:bold;margin-bottom:4px}'
-    + '.periodo{font-size:12px;color:#555}'
-    + '.emit{font-size:10px;color:#999;text-align:right}'
-    + '.resumo{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px}'
-    + '.res-item{border:1px solid #dde;border-radius:6px;padding:10px 16px;min-width:110px}'
-    + '.res-item .lb{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}'
-    + '.res-item .vl{font-size:20px;font-weight:bold;color:#1a3a6e;font-family:monospace}'
-    + '.res-item.dest{border-color:#1a6e3a}.res-item.dest .vl{color:#1a6e3a}'
-    + 'table{width:100%;border-collapse:collapse}'
-    + 'thead th{background:#1a3a6e;color:#fff;padding:9px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em}'
-    + 'thead th.c{text-align:center} thead th.r{text-align:right}'
-    + 'tbody tr{border-bottom:1px solid #e0e0e0}'
-    + 'tbody tr:nth-child(even){background:#f7f9fc}'
-    + 'tbody td{padding:8px 10px}'
-    + 'tbody td.c{text-align:center} tbody td.r{text-align:right}'
-    + 'tbody td.val{font-weight:600;color:#1a6e3a;font-family:monospace}'
-    + '.tot-row{background:#e8f0fe!important;font-weight:bold;border-top:2px solid #1a3a6e}'
-    + '.tot-row td{padding:10px;font-size:13px}'
-    + '.ftr{margin-top:22px;font-size:10px;color:#aaa;display:flex;justify-content:space-between;border-top:1px solid #eee;padding-top:10px}'
-    + '@media print{body{padding:14px}}'
-    + '</style></head><body>'
-    + '<div class="hdr"><div><h1>Controle de Alimentação — PCH Lebon Regis</h1><div class="tag">'+empresa+'</div><div class="periodo">Período: <strong>'+mesNome+'</strong></div></div><div class="emit">Emitido em: '+emit+'</div></div>'
-    + '<div class="resumo">'
-    +   '<div class="res-item"><div class="lb">☕ Cafés</div><div class="vl">'+tc+'</div></div>'
-    +   '<div class="res-item"><div class="lb">🍽 Almoços</div><div class="vl">'+ta+'</div></div>'
-    +   '<div class="res-item"><div class="lb">🌙 Jantas</div><div class="vl">'+tj+'</div></div>'
-    +   '<div class="res-item"><div class="lb">📦 Marmitas</div><div class="vl">'+tm+'</div></div>'
-    +   '<div class="res-item dest"><div class="lb">💰 Total Geral</div><div class="vl">R$ '+fmtNum(gt)+'</div></div>'
-    + '</div>'
-    + '<table><thead><tr><th>Data</th><th>Pagador</th><th class="c">☕ Café</th><th class="c">🍽 Almoço</th><th class="c">🌙 Janta</th><th class="c">📦 Marmita</th><th class="r">Total</th></tr></thead>'
-    + '<tbody>'+rows
-    + '<tr class="tot-row"><td colspan="2">TOTAL DO MÊS</td><td class="c">'+(tc||'—')+'</td><td class="c">'+(ta||'—')+'</td><td class="c">'+(tj||'—')+'</td><td class="c">'+(tm||'—')+'</td><td class="r val">R$ '+fmtNum(gt)+'</td></tr>'
-    + '</tbody></table>'
-    + '<div class="ftr"><span>BUCAGRANS Construtora de Obras S.A. — PCH Lebon Regis</span><span>'+empresa+' | '+mesNome+'</span></div>'
-    + '</body></html>';
-
-  const win = window.open('', '_blank', 'width=960,height=720');
-  win.document.open(); win.document.write(html); win.document.close();
-  setTimeout(() => win.print(), 800);
-}
-
-async function carregarResumoEmpresas() {
-  const mes=document.getElementById('resumoMesFiltro').value; if(!mes)return;
-  const [ano,m]=mes.split('-'); document.getElementById('resumoMesSub').textContent=MESES[parseInt(m)-1]+' '+ano;
-  const lancs=await getLancamentosMes(mes); const pp={};
-  for(const l of lancs){for(const [nome,d] of Object.entries(l.empresas||{})){const pag=d.pagador||nome;if(!pp[pag])pp[pag]={cafe:0,almoco:0,janta:0,marmita:0,empresas:new Set()};pp[pag].cafe+=d.cafe||0;pp[pag].almoco+=d.almoco||0;pp[pag].janta+=d.janta||0;pp[pag].marmita+=d.marmita||0;pp[pag].empresas.add(nome);}}
-  const grid=document.getElementById('resumoEmpresasGrid'), card=document.getElementById('resumoTotaisCard');
-  if(!Object.keys(pp).length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1">Nenhum dado neste mês</div>';card.style.display='none';return;}
-  card.style.display='block'; let gt=0, tr='';
-  grid.innerHTML=Object.entries(pp).map(([pag,d])=>{
-    const tc=d.cafe*precos.cafe,ta=d.almoco*precos.almoco,tj=d.janta*precos.janta,tm=d.marmita*precos.marmita_almoco,tot=tc+ta+tj+tm;
-    gt+=tot;
-    tr+='<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;"><span style="font-weight:600;color:var(--text)">'+pag+'</span><span style="font-family:var(--mono);color:var(--green)">R$ '+fmtNum(tot)+'</span></div>';
-    return '<div class="empresa-card"><div class="empresa-card-header"><div class="empresa-card-name">'+pag+'</div><div class="empresa-card-total">R$ '+fmtNum(tot)+'</div></div><div class="empresa-card-body">'+(d.cafe?mkMealRow('☕ Café da Manhã',d.cafe,precos.cafe,tc):'')+(d.almoco?mkMealRow('🍽 Almoço',d.almoco,precos.almoco,ta):'')+(d.janta?mkMealRow('🌙 Jantar',d.janta,precos.janta,tj):'')+(d.marmita?mkMealRow('📦 Marmita',d.marmita,precos.marmita_almoco,tm):'')+'<div style="margin-top:8px;font-size:11px;color:var(--text3)">Empresas: '+[...d.empresas].join(', ')+'</div></div></div>';
-  }).join('');
-  document.getElementById('resumoTotaisBody').innerHTML=tr+'<div style="display:flex;justify-content:space-between;padding:10px 0;font-size:15px;font-weight:600;margin-top:4px;"><span style="color:var(--text)">TOTAL GERAL</span><span style="font-family:var(--mono);color:var(--green)">R$ '+fmtNum(gt)+'</span></div>';
-}
-
-function mkMealRow(label,qtd,preco,total){return'<div class="empresa-meal-row"><span style="color:var(--text2)">'+label+'</span><span style="font-family:var(--mono);font-size:11px;color:var(--text3)">'+qtd+' x R$'+precos_fmt(preco)+' = <strong style="color:var(--text)">R$ '+fmtNum(total)+'</strong></span></div>';}
-
-async function getLancamentosMes(mesStr){if(dadosCal[mesStr])return dadosCal[mesStr];const all=await fsGetAll('alimentacao_lancamentos');const f=all.filter(l=>l.data&&l.data.startsWith(mesStr));dadosCal[mesStr]=f;return f;}
-
+// ══════════════════════════════════════════
+//  UTILITÁRIOS
+// ══════════════════════════════════════════
+function mesAtual() { const n=new Date(); return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0'); }
 function safeId(s){return s.replace(/[^a-zA-Z0-9]/g,'_');}
 function getVal(id){return document.getElementById(id)?.value||'0';}
 function setVal(id,v){const el=document.getElementById(id);if(el)el.value=v;}
@@ -693,8 +1057,8 @@ function fmtData(s){if(!s)return'';const[y,m,d]=s.split('-');return d+'/'+m+'/'+
 function toast(msg,type='success'){const w=document.getElementById('toastWrap');const el=document.createElement('div');el.className='toast '+type;el.innerHTML=(type==='success'?'✓ ':'✕ ')+msg;w.appendChild(el);setTimeout(()=>el.remove(),3000);}
 
 document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.getElementById('modalDesconto').addEventListener('click',function(e){if(e.target===this)closeModalDesconto();});
 document.getElementById('lancData').addEventListener('change',function(){document.getElementById('modalTitle').textContent='Lançar Refeições — '+fmtData(this.value);carregarDadosDia(this.value);});
 </script>
-
 </body>
 </html>
