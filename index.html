@@ -124,7 +124,7 @@ tbody td.mono { font-family: var(--mono); } tbody td.hl { color: var(--text); fo
 .modal-title { font-size: 16px; font-weight: 600; }
 .modal-close { background: none; border: none; color: var(--text3); font-size: 20px; cursor: pointer; padding: 2px 8px; border-radius: 4px; } .modal-close:hover { color: var(--text); background: var(--surface2); }
 .empresa-rows { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-.empresa-row { display: grid; grid-template-columns: 1fr 80px 80px 80px 80px; gap: 8px; align-items: center; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; }
+.empresa-row { display: grid; grid-template-columns: 1fr 80px 80px 80px 80px 80px; gap: 8px; align-items: center; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; }
 .empresa-name { font-size: 12px; font-weight: 500; color: var(--text); }
 .empresa-row input[type="number"] { background: var(--surface3); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: var(--mono); font-size: 13px; padding: 5px 8px; outline: none; width: 100%; text-align: center; }
 .empresa-row input:focus { border-color: var(--accent); }
@@ -229,12 +229,13 @@ tbody td.mono { font-family: var(--mono); } tbody td.hl { color: var(--text); fo
         <div style="font-family:var(--mono);font-size:18px;font-weight:600;color:var(--amber)" id="taxaPreviewVal">R$ 0,00</div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 80px 80px 80px 80px;gap:8px;margin-bottom:6px;padding:0 12px;">
+    <div style="display:grid;grid-template-columns:1fr 80px 80px 80px 80px 80px;gap:8px;margin-bottom:6px;padding:0 12px;">
       <span class="col-header">Empresa</span>
       <span class="col-header">&#9749; Café</span>
       <span class="col-header">&#127869; Almoço</span>
       <span class="col-header">&#127771; Janta</span>
-      <span class="col-header">&#128230; Marmita</span>
+      <span class="col-header">&#128230; Marmita Alm.</span>
+      <span class="col-header">&#128230; Marmita Jan.</span>
     </div>
     <div class="empresa-rows" id="empresaRows"></div>
     <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">
@@ -903,25 +904,25 @@ async function renderDashboard() {
   document.getElementById('topbarMeta').textContent = now.toLocaleDateString('pt-BR');
 
   const lancs = await getLancamentosMes(mes);
-  let tc=0,ta=0,tj=0,tm=0; const pe={};
+  let tc=0,ta=0,tj=0,tma=0,tmj=0; const pe={};
   for (const l of lancs) {
     for (const [nome,d] of Object.entries(l.empresas||{})) {
-      tc+=d.cafe||0; ta+=d.almoco||0; tj+=d.janta||0; tm+=d.marmita||0;
-      const pag=d.pagador||nome; if(!pe[pag])pe[pag]={cafe:0,almoco:0,janta:0,marmita:0};
-      pe[pag].cafe+=d.cafe||0; pe[pag].almoco+=d.almoco||0; pe[pag].janta+=d.janta||0; pe[pag].marmita+=d.marmita||0;
+      tc+=d.cafe||0; ta+=d.almoco||0; tj+=d.janta||0; tma+=(d.marmita_almoco||d.marmita||0); tmj+=d.marmita_janta||0;
+      const pag=d.pagador||nome; if(!pe[pag])pe[pag]={cafe:0,almoco:0,janta:0,marmita_almoco:0,marmita_janta:0};
+      pe[pag].cafe+=d.cafe||0; pe[pag].almoco+=d.almoco||0; pe[pag].janta+=d.janta||0; pe[pag].marmita_almoco+=(d.marmita_almoco||d.marmita||0); pe[pag].marmita_janta+=d.marmita_janta||0;
     }
   }
-  const vc=tc*precos.cafe,va=ta*precos.almoco,vj=tj*precos.janta,vm=tm*precos.marmita_almoco,tot=vc+va+vj+vm;
+  const vc=tc*precos.cafe,va=ta*precos.almoco,vj=tj*precos.janta,vma=tma*precos.marmita_almoco,vmj=tmj*precos.marmita_janta,tot=vc+va+vj+vma+vmj;
   document.getElementById('statCafe').textContent=tc; document.getElementById('statAlmoco').textContent=ta;
-  document.getElementById('statJanta').textContent=tj; document.getElementById('statMarmita').textContent=tm;
+  document.getElementById('statJanta').textContent=tj; document.getElementById('statMarmita').textContent=tma+tmj;
   document.getElementById('statCafeVal').textContent='R$ '+fmtNum(vc); document.getElementById('statAlmocoVal').textContent='R$ '+fmtNum(va);
-  document.getElementById('statJantaVal').textContent='R$ '+fmtNum(vj); document.getElementById('statMarmitaVal').textContent='R$ '+fmtNum(vm);
+  document.getElementById('statJantaVal').textContent='R$ '+fmtNum(vj); document.getElementById('statMarmitaVal').textContent='R$ '+fmtNum(vma+vmj);
   document.getElementById('totalMes').textContent='R$ '+fmtNum(tot);
   document.getElementById('totalMesSub').textContent=lancs.length+' dias com lançamento';
 
   const ult=[...lancs].sort((a,b)=>b.data.localeCompare(a.data)).slice(0,5);
   const ultEl=document.getElementById('ultLancamentos');
-  ultEl.innerHTML=ult.length?ult.map(l=>{let a=0,b=0,c=0,dd=0;for(const d of Object.values(l.empresas||{})){a+=d.cafe||0;b+=d.almoco||0;c+=d.janta||0;dd+=d.marmita||0;}return'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;"><div style="font-weight:500;color:var(--text)">'+fmtData(l.data)+'</div><div style="display:flex;gap:8px;">'+(a?'<span class="badge badge-amber">☕'+a+'</span>':'')+(b?'<span class="badge badge-blue">🍽'+b+'</span>':'')+(c?'<span class="badge badge-green">🌙'+c+'</span>':'')+(dd?'<span style="font-family:var(--mono);font-size:11px;padding:2px 6px;background:var(--purple-dim);color:var(--purple);border-radius:4px">📦'+dd+'</span>':'')+'</div></div>';}).join(''):'<div class="empty-state">Nenhum lançamento este mês</div>';
+  ultEl.innerHTML=ult.length?ult.map(l=>{let a=0,b=0,c=0,dma=0,dmj=0;for(const d of Object.values(l.empresas||{})){a+=d.cafe||0;b+=d.almoco||0;c+=d.janta||0;dma+=(d.marmita_almoco||d.marmita||0);dmj+=d.marmita_janta||0;}return'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;"><div style="font-weight:500;color:var(--text)">'+fmtData(l.data)+'</div><div style="display:flex;gap:8px;">'+(a?'<span class="badge badge-amber">☕'+a+'</span>':'')+(b?'<span class="badge badge-blue">🍽'+b+'</span>':'')+(c?'<span class="badge badge-green">🌙'+c+'</span>':'')+(dma?'<span style="font-family:var(--mono);font-size:11px;padding:2px 6px;background:var(--purple-dim);color:var(--purple);border-radius:4px">📦A '+dma+'</span>':'')+(dmj?'<span style="font-family:var(--mono);font-size:11px;padding:2px 6px;background:var(--purple-dim);color:var(--purple);border-radius:4px">📦J '+dmj+'</span>':'')+'</div></div>';}).join(''):'<div class="empty-state">Nenhum lançamento este mês</div>';
 
   // Descontos mini-resumo no dashboard
   const descontos = await getDescontosMes(mes);
@@ -946,7 +947,7 @@ async function renderDashboard() {
 
   // Tabela empresas mês
   const tbl=document.getElementById('tabelaEmpresasMes');
-  tbl.innerHTML=Object.keys(pe).length?'<table><thead><tr><th>Pagador</th><th>☕</th><th>🍽</th><th>🌙</th><th>📦</th><th>Total R$</th></tr></thead><tbody>'+Object.entries(pe).map(([p,d])=>{const t=d.cafe*precos.cafe+d.almoco*precos.almoco+d.janta*precos.janta+d.marmita*precos.marmita_almoco;return'<tr><td class="hl">'+p+'</td><td class="mono">'+(d.cafe||'—')+'</td><td class="mono">'+(d.almoco||'—')+'</td><td class="mono">'+(d.janta||'—')+'</td><td class="mono">'+(d.marmita||'—')+'</td><td class="mono" style="color:var(--green);font-weight:600">R$ '+fmtNum(t)+'</td></tr>';}).join('')+'</tbody></table>':'<div class="empty-state">Nenhum dado este mês</div>';
+  tbl.innerHTML=Object.keys(pe).length?'<table><thead><tr><th>Pagador</th><th>☕</th><th>🍽</th><th>🌙</th><th>📦 Alm.</th><th>📦 Jan.</th><th>Total R$</th></tr></thead><tbody>'+Object.entries(pe).map(([p,d])=>{const t=d.cafe*precos.cafe+d.almoco*precos.almoco+d.janta*precos.janta+d.marmita_almoco*precos.marmita_almoco+d.marmita_janta*precos.marmita_janta;return'<tr><td class="hl">'+p+'</td><td class="mono">'+(d.cafe||'—')+'</td><td class="mono">'+(d.almoco||'—')+'</td><td class="mono">'+(d.janta||'—')+'</td><td class="mono">'+(d.marmita_almoco||'—')+'</td><td class="mono">'+(d.marmita_janta||'—')+'</td><td class="mono" style="color:var(--green);font-weight:600">R$ '+fmtNum(t)+'</td></tr>';}).join('')+'</tbody></table>':'<div class="empty-state">Nenhum dado este mês</div>';
 }
 
 async function renderCalendario() {
@@ -955,7 +956,7 @@ async function renderCalendario() {
   const mesStr=ano+'-'+String(mes+1).padStart(2,'0');
   const lancs=await getLancamentosMes(mesStr);
   const pd={};
-  for(const l of lancs){let tc=0,ta=0,tj=0,tm=0;for(const d of Object.values(l.empresas||{})){tc+=d.cafe||0;ta+=d.almoco||0;tj+=d.janta||0;tm+=d.marmita||0;}pd[l.data]={cafe:tc,almoco:ta,janta:tj,marmita:tm};}
+  for(const l of lancs){let tc=0,ta=0,tj=0,tma=0,tmj=0;for(const d of Object.values(l.empresas||{})){tc+=d.cafe||0;ta+=d.almoco||0;tj+=d.janta||0;tma+=(d.marmita_almoco||d.marmita||0);tmj+=d.marmita_janta||0;}pd[l.data]={cafe:tc,almoco:ta,janta:tj,marmita_almoco:tma,marmita_janta:tmj};}
   const grid=document.getElementById('calGrid'); grid.innerHTML='';
   DIAS.forEach(d=>{const el=document.createElement('div');el.className='cal-dow';el.textContent=d;grid.appendChild(el);});
   const pd1=new Date(ano,mes,1).getDay();
@@ -965,7 +966,7 @@ async function renderCalendario() {
     const ds=ano+'-'+String(mes+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'), dd=pd[ds]||null;
     const el=document.createElement('div');
     el.className='cal-day'+(ds===hoje?' today':'')+(dd?' has-data':'');
-    el.innerHTML='<div class="cal-day-num">'+d+'</div><div class="cal-chips">'+(dd?.cafe?'<span class="cal-chip cafe">☕'+dd.cafe+'</span>':'')+(dd?.almoco?'<span class="cal-chip almoco">🍽'+dd.almoco+'</span>':'')+(dd?.janta?'<span class="cal-chip janta">🌙'+dd.janta+'</span>':'')+(dd?.marmita?'<span class="cal-chip marmita">📦'+dd.marmita+'</span>':'')+'</div>';
+    el.innerHTML='<div class="cal-day-num">'+d+'</div><div class="cal-chips">'+(dd?.cafe?'<span class="cal-chip cafe">☕'+dd.cafe+'</span>':'')+(dd?.almoco?'<span class="cal-chip almoco">🍽'+dd.almoco+'</span>':'')+(dd?.janta?'<span class="cal-chip janta">🌙'+dd.janta+'</span>':'')+(dd?.marmita_almoco?'<span class="cal-chip marmita">📦A '+dd.marmita_almoco+'</span>':'')+(dd?.marmita_janta?'<span class="cal-chip marmita">📦J '+dd.marmita_janta+'</span>':'')+'</div>';
     el.onclick=()=>openLancamento(ds); grid.appendChild(el);
   }
 }
@@ -986,18 +987,19 @@ async function carregarHistorico() {
   const tbl=document.getElementById('tabelaHistorico');
   if(!lancs.length){tbl.innerHTML='<div class="empty-state">Nenhum lançamento neste mês</div>';return;}
   const sorted=[...lancs].sort((a,b)=>b.data.localeCompare(a.data));
-  let rows='',tc=0,ta=0,tj=0,tm=0,gt=0;
+  let rows='',tc=0,ta=0,tj=0,tma=0,tmj=0,gt=0;
   for(const l of sorted){
     for(const [nome,d] of Object.entries(l.empresas||{})){
       if(ef && nome!==ef)continue;
-      const tot=(d.cafe||0)*precos.cafe+(d.almoco||0)*precos.almoco+(d.janta||0)*precos.janta+(d.marmita||0)*precos.marmita_almoco;
-      tc+=d.cafe||0;ta+=d.almoco||0;tj+=d.janta||0;tm+=d.marmita||0;gt+=tot;
-      rows+='<tr><td class="mono">'+fmtData(l.data)+'</td><td class="hl">'+nome+'</td><td><span class="badge badge-blue">'+(d.pagador||nome)+'</span></td><td class="mono">'+(d.cafe||'—')+'</td><td class="mono">'+(d.almoco||'—')+'</td><td class="mono">'+(d.janta||'—')+'</td><td class="mono">'+(d.marmita||'—')+'</td><td class="mono" style="color:var(--green)">R$ '+fmtNum(tot)+'</td><td class="no-print"><button class="btn btn-ghost btn-sm" onclick="openLancamento(\''+l.data+'\')">&#9999;&#65039;</button></td></tr>';
+      const ma=d.marmita_almoco||d.marmita||0, mj=d.marmita_janta||0;
+      const tot=(d.cafe||0)*precos.cafe+(d.almoco||0)*precos.almoco+(d.janta||0)*precos.janta+ma*precos.marmita_almoco+mj*precos.marmita_janta;
+      tc+=d.cafe||0;ta+=d.almoco||0;tj+=d.janta||0;tma+=ma;tmj+=mj;gt+=tot;
+      rows+='<tr><td class="mono">'+fmtData(l.data)+'</td><td class="hl">'+nome+'</td><td><span class="badge badge-blue">'+(d.pagador||nome)+'</span></td><td class="mono">'+(d.cafe||'—')+'</td><td class="mono">'+(d.almoco||'—')+'</td><td class="mono">'+(d.janta||'—')+'</td><td class="mono">'+(ma||'—')+'</td><td class="mono">'+(mj||'—')+'</td><td class="mono" style="color:var(--green)">R$ '+fmtNum(tot)+'</td><td class="no-print"><button class="btn btn-ghost btn-sm" onclick="openLancamento(\''+l.data+'\')">&#9999;&#65039;</button></td></tr>';
     }
   }
   if(!rows){tbl.innerHTML='<div class="empty-state">Nenhum lançamento para esta empresa neste mês</div>';return;}
-  const totalRow='<tr style="background:var(--surface2);font-weight:600;"><td colspan="3" style="color:var(--text2);font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;">TOTAL DO PERÍODO</td><td class="mono" style="color:var(--amber)">'+(tc||'—')+'</td><td class="mono" style="color:var(--accent2)">'+(ta||'—')+'</td><td class="mono" style="color:var(--green)">'+(tj||'—')+'</td><td class="mono" style="color:var(--purple)">'+(tm||'—')+'</td><td class="mono" style="color:var(--green);font-size:14px">R$ '+fmtNum(gt)+'</td><td class="no-print"></td></tr>';
-  tbl.innerHTML='<table><thead><tr><th>Data</th><th>Empresa</th><th>Pagador</th><th>☕ Café</th><th>🍽 Almoço</th><th>🌙 Janta</th><th>📦 Marmita</th><th>Total</th><th class="no-print">Ação</th></tr></thead><tbody>'+rows+totalRow+'</tbody></table>';
+  const totalRow='<tr style="background:var(--surface2);font-weight:600;"><td colspan="3" style="color:var(--text2);font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;">TOTAL DO PERÍODO</td><td class="mono" style="color:var(--amber)">'+(tc||'—')+'</td><td class="mono" style="color:var(--accent2)">'+(ta||'—')+'</td><td class="mono" style="color:var(--green)">'+(tj||'—')+'</td><td class="mono" style="color:var(--purple)">'+(tma||'—')+'</td><td class="mono" style="color:var(--purple)">'+(tmj||'—')+'</td><td class="mono" style="color:var(--green);font-size:14px">R$ '+fmtNum(gt)+'</td><td class="no-print"></td></tr>';
+  tbl.innerHTML='<table><thead><tr><th>Data</th><th>Empresa</th><th>Pagador</th><th>☕ Café</th><th>🍽 Almoço</th><th>🌙 Janta</th><th>📦 Marm. Alm.</th><th>📦 Marm. Jan.</th><th>Total</th><th class="no-print">Ação</th></tr></thead><tbody>'+rows+totalRow+'</tbody></table>';
 }
 
 async function imprimirPorEmpresa() {
@@ -1010,12 +1012,13 @@ async function imprimirPorEmpresa() {
   const mesNome = MESES[parseInt(m)-1] + ' ' + ano;
   const sorted = [...lancs].filter(l => l.empresas && l.empresas[empresa]).sort((a,b) => a.data.localeCompare(b.data));
   if (!sorted.length) { toast('Nenhum lançamento para ' + empresa + ' neste mês', 'error'); return; }
-  let rows = '', tc=0, ta=0, tj=0, tm=0, gt=0;
+  let rows = '', tc=0, ta=0, tj=0, tma=0, tmj=0, gt=0;
   for (const l of sorted) {
     const d = l.empresas[empresa];
-    const tot = (d.cafe||0)*precos.cafe + (d.almoco||0)*precos.almoco + (d.janta||0)*precos.janta + (d.marmita||0)*precos.marmita_almoco;
-    tc+=d.cafe||0; ta+=d.almoco||0; tj+=d.janta||0; tm+=d.marmita||0; gt+=tot;
-    rows += '<tr><td>'+fmtData(l.data)+'</td><td>'+(d.pagador||empresa)+'</td><td class="c">'+(d.cafe||'—')+'</td><td class="c">'+(d.almoco||'—')+'</td><td class="c">'+(d.janta||'—')+'</td><td class="c">'+(d.marmita||'—')+'</td><td class="r val">R$ '+fmtNum(tot)+'</td></tr>';
+    const ma=d.marmita_almoco||d.marmita||0, mj=d.marmita_janta||0;
+    const tot = (d.cafe||0)*precos.cafe + (d.almoco||0)*precos.almoco + (d.janta||0)*precos.janta + ma*precos.marmita_almoco + mj*precos.marmita_janta;
+    tc+=d.cafe||0; ta+=d.almoco||0; tj+=d.janta||0; tma+=ma; tmj+=mj; gt+=tot;
+    rows += '<tr><td>'+fmtData(l.data)+'</td><td>'+(d.pagador||empresa)+'</td><td class="c">'+(d.cafe||'—')+'</td><td class="c">'+(d.almoco||'—')+'</td><td class="c">'+(d.janta||'—')+'</td><td class="c">'+(ma||'—')+'</td><td class="c">'+(mj||'—')+'</td><td class="r val">R$ '+fmtNum(tot)+'</td></tr>';
   }
 
   const descEmpresa = descontos.filter(d => d.empresa === empresa);
@@ -1048,10 +1051,10 @@ async function imprimirPorEmpresa() {
     + '.ftr{margin-top:22px;font-size:10px;color:#aaa;display:flex;justify-content:space-between;border-top:1px solid #eee;padding-top:10px}'
     + '@media print{body{padding:14px}}</style></head><body>'
     + '<div class="hdr"><div><h1>Controle de Alimentação — PCH Lebon Regis</h1><div class="tag">'+empresa+'</div><div class="periodo">Período: <strong>'+mesNome+'</strong></div></div><div class="emit">Emitido em: '+emit+'</div></div>'
-    + '<div class="resumo"><div class="res-item"><div class="lb">☕ Cafés</div><div class="vl">'+tc+'</div></div><div class="res-item"><div class="lb">🍽 Almoços</div><div class="vl">'+ta+'</div></div><div class="res-item"><div class="lb">🌙 Jantas</div><div class="vl">'+tj+'</div></div><div class="res-item"><div class="lb">📦 Marmitas</div><div class="vl">'+tm+'</div></div><div class="res-item dest"><div class="lb">💰 Total Refeições</div><div class="vl">R$ '+fmtNum(gt)+'</div></div>'+(totalDescontos?'<div class="res-item desc-tot"><div class="lb">⛽ Total Descontos</div><div class="vl">R$ '+fmtNum(totalDescontos)+'</div></div><div class="res-item dest"><div class="lb">✅ Líquido</div><div class="vl">R$ '+fmtNum(gt+totalDescontos)+'</div></div>':'')+'</div>'
+    + '<div class="resumo"><div class="res-item"><div class="lb">☕ Cafés</div><div class="vl">'+tc+'</div></div><div class="res-item"><div class="lb">🍽 Almoços</div><div class="vl">'+ta+'</div></div><div class="res-item"><div class="lb">🌙 Jantas</div><div class="vl">'+tj+'</div></div><div class="res-item"><div class="lb">📦 Marm. Alm.</div><div class="vl">'+tma+'</div></div><div class="res-item"><div class="lb">📦 Marm. Jan.</div><div class="vl">'+tmj+'</div></div><div class="res-item dest"><div class="lb">💰 Total Refeições</div><div class="vl">R$ '+fmtNum(gt)+'</div></div>'+(totalDescontos?'<div class="res-item desc-tot"><div class="lb">⛽ Total Descontos</div><div class="vl">R$ '+fmtNum(totalDescontos)+'</div></div><div class="res-item dest"><div class="lb">✅ Líquido</div><div class="vl">R$ '+fmtNum(gt+totalDescontos)+'</div></div>':'')+'</div>'
     + '<div class="sec-title">Refeições</div>'
-    + '<table><thead><tr><th>Data</th><th>Pagador</th><th class="c">☕</th><th class="c">🍽</th><th class="c">🌙</th><th class="c">📦</th><th class="r">Total</th></tr></thead><tbody>'+rows
-    + '<tr class="tot-row"><td colspan="2">TOTAL</td><td class="c">'+(tc||'—')+'</td><td class="c">'+(ta||'—')+'</td><td class="c">'+(tj||'—')+'</td><td class="c">'+(tm||'—')+'</td><td class="r val">R$ '+fmtNum(gt)+'</td></tr></tbody></table>'
+    + '<table><thead><tr><th>Data</th><th>Pagador</th><th class="c">☕</th><th class="c">🍽</th><th class="c">🌙</th><th class="c">📦Alm.</th><th class="c">📦Jan.</th><th class="r">Total</th></tr></thead><tbody>'+rows
+    + '<tr class="tot-row"><td colspan="2">TOTAL</td><td class="c">'+(tc||'—')+'</td><td class="c">'+(ta||'—')+'</td><td class="c">'+(tj||'—')+'</td><td class="c">'+(tma||'—')+'</td><td class="c">'+(tmj||'—')+'</td><td class="r val">R$ '+fmtNum(gt)+'</td></tr></tbody></table>'
     + (descRows ? '<div class="sec-title">Descontos</div><table><thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th class="r">Valor</th></tr></thead><tbody>'+descRows+'<tr class="tot-row"><td colspan="3">TOTAL DESCONTOS</td><td class="r" style="color:#b04000;font-family:monospace">R$ '+fmtNum(totalDescontos)+'</td></tr></tbody></table>' : '')
     + '<div class="ftr"><span>BUCAGRANS Construtora de Obras S.A. — PCH Lebon Regis</span><span>'+empresa+' | '+mesNome+'</span></div></body></html>';
 
@@ -1064,15 +1067,15 @@ async function carregarResumoEmpresas() {
   const mes=document.getElementById('resumoMesFiltro').value; if(!mes)return;
   const [ano,m]=mes.split('-'); document.getElementById('resumoMesSub').textContent=MESES[parseInt(m)-1]+' '+ano;
   const lancs=await getLancamentosMes(mes); const pp={};
-  for(const l of lancs){for(const [nome,d] of Object.entries(l.empresas||{})){const pag=d.pagador||nome;if(!pp[pag])pp[pag]={cafe:0,almoco:0,janta:0,marmita:0,empresas:new Set()};pp[pag].cafe+=d.cafe||0;pp[pag].almoco+=d.almoco||0;pp[pag].janta+=d.janta||0;pp[pag].marmita+=d.marmita||0;pp[pag].empresas.add(nome);}}
+  for(const l of lancs){for(const [nome,d] of Object.entries(l.empresas||{})){const pag=d.pagador||nome;if(!pp[pag])pp[pag]={cafe:0,almoco:0,janta:0,marmita_almoco:0,marmita_janta:0,empresas:new Set()};pp[pag].cafe+=d.cafe||0;pp[pag].almoco+=d.almoco||0;pp[pag].janta+=d.janta||0;pp[pag].marmita_almoco+=(d.marmita_almoco||d.marmita||0);pp[pag].marmita_janta+=d.marmita_janta||0;pp[pag].empresas.add(nome);}}
   const grid=document.getElementById('resumoEmpresasGrid'), card=document.getElementById('resumoTotaisCard');
   if(!Object.keys(pp).length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1">Nenhum dado neste mês</div>';card.style.display='none';return;}
   card.style.display='block'; let gt=0, tr='';
   grid.innerHTML=Object.entries(pp).map(([pag,d])=>{
-    const tc=d.cafe*precos.cafe,ta=d.almoco*precos.almoco,tj=d.janta*precos.janta,tm=d.marmita*precos.marmita_almoco,tot=tc+ta+tj+tm;
+    const tc=d.cafe*precos.cafe,ta=d.almoco*precos.almoco,tj=d.janta*precos.janta,tma=d.marmita_almoco*precos.marmita_almoco,tmj=d.marmita_janta*precos.marmita_janta,tot=tc+ta+tj+tma+tmj;
     gt+=tot;
     tr+='<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;"><span style="font-weight:600;color:var(--text)">'+pag+'</span><span style="font-family:var(--mono);color:var(--green)">R$ '+fmtNum(tot)+'</span></div>';
-    return '<div class="empresa-card"><div class="empresa-card-header"><div class="empresa-card-name">'+pag+'</div><div class="empresa-card-total">R$ '+fmtNum(tot)+'</div></div><div class="empresa-card-body">'+(d.cafe?mkMealRow('☕ Café da Manhã',d.cafe,precos.cafe,tc):'')+(d.almoco?mkMealRow('🍽 Almoço',d.almoco,precos.almoco,ta):'')+(d.janta?mkMealRow('🌙 Jantar',d.janta,precos.janta,tj):'')+(d.marmita?mkMealRow('📦 Marmita',d.marmita,precos.marmita_almoco,tm):'')+'<div style="margin-top:8px;font-size:11px;color:var(--text3)">Empresas: '+[...d.empresas].join(', ')+'</div></div></div>';
+    return '<div class="empresa-card"><div class="empresa-card-header"><div class="empresa-card-name">'+pag+'</div><div class="empresa-card-total">R$ '+fmtNum(tot)+'</div></div><div class="empresa-card-body">'+(d.cafe?mkMealRow('☕ Café da Manhã',d.cafe,precos.cafe,tc):'')+(d.almoco?mkMealRow('🍽 Almoço',d.almoco,precos.almoco,ta):'')+(d.janta?mkMealRow('🌙 Jantar',d.janta,precos.janta,tj):'')+(d.marmita_almoco?mkMealRow('📦 Marmita Almoço',d.marmita_almoco,precos.marmita_almoco,tma):'')+(d.marmita_janta?mkMealRow('📦 Marmita Jantar',d.marmita_janta,precos.marmita_janta,tmj):'')+'<div style="margin-top:8px;font-size:11px;color:var(--text3)">Empresas: '+[...d.empresas].join(', ')+'</div></div></div>';
   }).join('');
   document.getElementById('resumoTotaisBody').innerHTML=tr+'<div style="display:flex;justify-content:space-between;padding:10px 0;font-size:15px;font-weight:600;margin-top:4px;"><span style="color:var(--text)">TOTAL GERAL</span><span style="font-family:var(--mono);color:var(--green)">R$ '+fmtNum(gt)+'</span></div>';
 }
@@ -1093,7 +1096,8 @@ function openLancamento(data) {
     '<input type="number" min="0" value="0" id="row_cafe_'+safeId(e.nome)+'">' +
     '<input type="number" min="0" value="0" id="row_almoco_'+safeId(e.nome)+'">' +
     '<input type="number" min="0" value="0" id="row_janta_'+safeId(e.nome)+'">' +
-    '<input type="number" min="0" value="0" id="row_marmita_'+safeId(e.nome)+'"></div>').join('');
+    '<input type="number" min="0" value="0" id="row_marmita_alm_'+safeId(e.nome)+'">' +
+    '<input type="number" min="0" value="0" id="row_marmita_jan_'+safeId(e.nome)+'"></div>').join('');
   // reset taxa
   document.getElementById('taxaObra').checked = false;
   document.getElementById('taxaCidade').checked = false;
@@ -1119,7 +1123,7 @@ async function carregarDadosDia(data) {
   if (!snap) return;
   for (const e of empresas) {
     const sid=safeId(e.nome); const d=snap.empresas?.[e.nome]||{};
-    setVal('row_cafe_'+sid,d.cafe||0); setVal('row_almoco_'+sid,d.almoco||0); setVal('row_janta_'+sid,d.janta||0); setVal('row_marmita_'+sid,d.marmita||0);
+    setVal('row_cafe_'+sid,d.cafe||0); setVal('row_almoco_'+sid,d.almoco||0); setVal('row_janta_'+sid,d.janta||0); setVal('row_marmita_alm_'+sid,d.marmita_almoco||d.marmita||0); setVal('row_marmita_jan_'+sid,d.marmita_janta||0);
   }
   // Restaura taxa de entrega
   const taxa = snap.taxaEntrega || '';
@@ -1137,8 +1141,8 @@ async function salvarLancamento() {
   const ed = {};
   for (const e of empresas) {
     const sid=safeId(e.nome);
-    const cafe=parseInt(getVal('row_cafe_'+sid))||0, almoco=parseInt(getVal('row_almoco_'+sid))||0, janta=parseInt(getVal('row_janta_'+sid))||0, marmita=parseInt(getVal('row_marmita_'+sid))||0;
-    if (cafe+almoco+janta+marmita>0) ed[e.nome]={cafe,almoco,janta,marmita,pagador:e.pagador};
+    const cafe=parseInt(getVal('row_cafe_'+sid))||0, almoco=parseInt(getVal('row_almoco_'+sid))||0, janta=parseInt(getVal('row_janta_'+sid))||0, marmita_almoco=parseInt(getVal('row_marmita_alm_'+sid))||0, marmita_janta=parseInt(getVal('row_marmita_jan_'+sid))||0;
+    if (cafe+almoco+janta+marmita_almoco+marmita_janta>0) ed[e.nome]={cafe,almoco,janta,marmita_almoco,marmita_janta,pagador:e.pagador};
   }
   await fsSet('alimentacao_lancamentos', data, {data, empresas:ed, taxaEntrega, updatedAt:new Date().toISOString()});
   dadosCal={};
@@ -1218,20 +1222,21 @@ async function carregarQuinzenal() {
   const descQ = descontos.filter(d => d.data >= ini && d.data <= fim);
 
   // Totais refeições
-  let tc=0, ta=0, tj=0, tm=0;
+  let tc=0, ta=0, tj=0, tma=0, tmj=0;
   const porPagador = {};
   const porEmpresa = {};
 
   for (const l of lancsQ) {
     for (const [nome, d] of Object.entries(l.empresas || {})) {
-      tc += d.cafe||0; ta += d.almoco||0; tj += d.janta||0; tm += d.marmita||0;
+      const ma=d.marmita_almoco||d.marmita||0, mj=d.marmita_janta||0;
+      tc += d.cafe||0; ta += d.almoco||0; tj += d.janta||0; tma += ma; tmj += mj;
       const pag = d.pagador || nome;
-      if (!porPagador[pag]) porPagador[pag] = {cafe:0,almoco:0,janta:0,marmita:0,taxaObra:0,taxaCidade:0};
+      if (!porPagador[pag]) porPagador[pag] = {cafe:0,almoco:0,janta:0,marmita_almoco:0,marmita_janta:0,taxaObra:0,taxaCidade:0};
       porPagador[pag].cafe+=d.cafe||0; porPagador[pag].almoco+=d.almoco||0;
-      porPagador[pag].janta+=d.janta||0; porPagador[pag].marmita+=d.marmita||0;
-      if (!porEmpresa[nome]) porEmpresa[nome] = {cafe:0,almoco:0,janta:0,marmita:0,pagador:pag};
+      porPagador[pag].janta+=d.janta||0; porPagador[pag].marmita_almoco+=ma; porPagador[pag].marmita_janta+=mj;
+      if (!porEmpresa[nome]) porEmpresa[nome] = {cafe:0,almoco:0,janta:0,marmita_almoco:0,marmita_janta:0,pagador:pag};
       porEmpresa[nome].cafe+=d.cafe||0; porEmpresa[nome].almoco+=d.almoco||0;
-      porEmpresa[nome].janta+=d.janta||0; porEmpresa[nome].marmita+=d.marmita||0;
+      porEmpresa[nome].janta+=d.janta||0; porEmpresa[nome].marmita_almoco+=ma; porEmpresa[nome].marmita_janta+=mj;
     }
   }
 
@@ -1255,7 +1260,7 @@ async function carregarQuinzenal() {
     porPagador[pagTaxa].taxaCidade += qtdCidade;
   }
 
-  const totalRef = tc*precos.cafe + ta*precos.almoco + tj*precos.janta + tm*precos.marmita_almoco;
+  const totalRef = tc*precos.cafe + ta*precos.almoco + tj*precos.janta + tma*precos.marmita_almoco + tmj*precos.marmita_janta;
   const totalDesc = descQ.reduce((s,d)=>s+d.valor, 0);
   const liquido = totalRef + totalTaxas - totalDesc;
 
@@ -1289,21 +1294,23 @@ async function carregarQuinzenal() {
   if (!Object.keys(porEmpresa).length) {
     tblEmp.innerHTML = '<div class="empty-state">Nenhum lançamento nesta quinzena</div>';
   } else {
-    let rows = ''; let stc=0,sta=0,stj=0,stm=0,sgt=0;
+    let rows = ''; let stc=0,sta=0,stj=0,stma=0,stmj=0,sgt=0;
     for (const [nome, d] of Object.entries(porEmpresa)) {
-      const tot = d.cafe*precos.cafe+d.almoco*precos.almoco+d.janta*precos.janta+d.marmita*precos.marmita_almoco;
-      stc+=d.cafe;sta+=d.almoco;stj+=d.janta;stm+=d.marmita;sgt+=tot;
+      const tot = d.cafe*precos.cafe+d.almoco*precos.almoco+d.janta*precos.janta+d.marmita_almoco*precos.marmita_almoco+d.marmita_janta*precos.marmita_janta;
+      stc+=d.cafe;sta+=d.almoco;stj+=d.janta;stma+=d.marmita_almoco;stmj+=d.marmita_janta;sgt+=tot;
       rows += '<tr><td class="hl">'+nome+'</td><td><span class="badge badge-blue">'+d.pagador+'</span></td>'
         +'<td class="mono">'+(d.cafe||'—')+'</td><td class="mono">'+(d.almoco||'—')+'</td>'
-        +'<td class="mono">'+(d.janta||'—')+'</td><td class="mono">'+(d.marmita||'—')+'</td>'
+        +'<td class="mono">'+(d.janta||'—')+'</td><td class="mono">'+(d.marmita_almoco||'—')+'</td>'
+        +'<td class="mono">'+(d.marmita_janta||'—')+'</td>'
         +'<td class="mono" style="color:var(--green);font-weight:600">R$ '+fmtNum(tot)+'</td></tr>';
     }
     rows += '<tr style="background:var(--surface2);font-weight:600;">'
       +'<td colspan="2" style="color:var(--text2);font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;">TOTAL QUINZENA</td>'
       +'<td class="mono" style="color:var(--amber)">'+(stc||'—')+'</td><td class="mono" style="color:var(--accent2)">'+(sta||'—')+'</td>'
-      +'<td class="mono" style="color:var(--green)">'+(stj||'—')+'</td><td class="mono" style="color:var(--purple)">'+(stm||'—')+'</td>'
+      +'<td class="mono" style="color:var(--green)">'+(stj||'—')+'</td><td class="mono" style="color:var(--purple)">'+(stma||'—')+'</td>'
+      +'<td class="mono" style="color:var(--purple)">'+(stmj||'—')+'</td>'
       +'<td class="mono" style="color:var(--green);font-size:14px">R$ '+fmtNum(sgt)+'</td></tr>';
-    tblEmp.innerHTML='<table><thead><tr><th>Empresa</th><th>Pagador</th><th>☕ Café</th><th>🍽 Almoço</th><th>🌙 Janta</th><th>📦 Marmita</th><th>Total</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    tblEmp.innerHTML='<table><thead><tr><th>Empresa</th><th>Pagador</th><th>☕ Café</th><th>🍽 Almoço</th><th>🌙 Janta</th><th>📦 Marm. Alm.</th><th>📦 Marm. Jan.</th><th>Total</th></tr></thead><tbody>'+rows+'</tbody></table>';
   }
 
   // Tabela descontos
@@ -1336,7 +1343,7 @@ async function carregarQuinzenal() {
 
   let html = '<div style="display:flex;flex-direction:column;gap:10px;">'; let gtLiq=0;
   for (const [pag, d] of Object.entries(porPagador)) {
-    const brutoRef  = d.cafe*precos.cafe+d.almoco*precos.almoco+d.janta*precos.janta+d.marmita*precos.marmita_almoco;
+    const brutoRef  = d.cafe*precos.cafe+d.almoco*precos.almoco+d.janta*precos.janta+d.marmita_almoco*precos.marmita_almoco+d.marmita_janta*precos.marmita_janta;
     const brutoTaxa = (d.taxaObra||0)*precos.taxa_entrega + (d.taxaCidade||0)*precos.taxa_cidade;
     const bruto = brutoRef + brutoTaxa;
     const desc = descPorPag[pag]||0; const liq=bruto-desc; gtLiq+=liq;
@@ -1379,14 +1386,15 @@ async function imprimirQuinzenal() {
   const descQ  = descontos.filter(d => d.data >= ini && d.data <= fim);
 
   // Totais do período
-  let cafe=0, almoco=0, marmita=0, jantar=0, taxaObra=0, taxaCidade=0;
+  let cafe=0, almoco=0, marmita_almoco=0, marmita_janta=0, jantar=0, taxaObra=0, taxaCidade=0;
   for (const l of lancsQ) {
     if (l.taxaEntrega === 'obra' || l.taxaEntrega === 'ambos') taxaObra++;
     if (l.taxaEntrega === 'cidade' || l.taxaEntrega === 'ambos') taxaCidade++;
     for (const d of Object.values(l.empresas || {})) {
       cafe    += d.cafe||0;
       almoco  += d.almoco||0;
-      marmita += d.marmita||0;
+      marmita_almoco += d.marmita_almoco||d.marmita||0;
+      marmita_janta  += d.marmita_janta||0;
       jantar  += d.janta||0;
     }
   }
@@ -1446,7 +1454,7 @@ async function imprimirQuinzenal() {
   setVal(addr(colNum,6), [fimY, fimM, fimD]);
 
   // ── 2. Quantidades do mês (tabela numeros, linhas 10-15) ──
-  const qtds = { 10: cafe, 11: almoco, 12: marmita, 13: jantar, 14: taxaObra, 15: taxaCidade };
+  const qtds = { 10: cafe, 11: almoco, 12: marmita_almoco, 13: jantar, 14: taxaObra, 15: taxaCidade };
   for (const [row, val] of Object.entries(qtds)) {
     setVal(addr(colNum, Number(row)), val);
   }
@@ -1507,7 +1515,7 @@ async function imprimirQuinzenalHTML() {
   for (const l of lancsQ) {
     let cafe=0, almoco=0, janta=0, marmAlmo=0, marmJanta=0, taxaObra=0, taxaCidade=0;
     for (const d of Object.values(l.empresas||{})) {
-      cafe+=d.cafe||0; almoco+=d.almoco||0; janta+=d.janta||0; marmAlmo+=d.marmita||0;
+      cafe+=d.cafe||0; almoco+=d.almoco||0; janta+=d.janta||0; marmAlmo+=(d.marmita_almoco||d.marmita||0); marmJanta+=d.marmita_janta||0;
     }
     if (l.taxaEntrega==='obra' || l.taxaEntrega==='ambos') taxaObra++;
     if (l.taxaEntrega==='cidade' || l.taxaEntrega==='ambos') taxaCidade++;
