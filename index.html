@@ -215,17 +215,21 @@ tbody td.mono { font-family: var(--mono); } tbody td.hl { color: var(--text); fo
       </div>
       <div class="form-group">
         <label>🚚 Taxa de Entrega do Dia</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <label class="taxa-opt" id="taxaOpt1">
-            <input type="checkbox" id="taxaObra" onchange="onTaxaChange()"> 🏗 Obra <span style="font-family:var(--mono);font-size:11px;color:var(--text3)">(R$ 32,50)</span>
-          </label>
-          <label class="taxa-opt" id="taxaOpt2">
-            <input type="checkbox" id="taxaCidade" onchange="onTaxaChange()"> 🏙 Cidade <span style="font-family:var(--mono);font-size:11px;color:var(--text3)">(R$ 10,00)</span>
-          </label>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+          <div style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:7px 12px;">
+            <span style="font-size:13px;color:var(--text2)">🏗 Obra</span>
+            <input type="number" id="taxaObraQtd" min="0" value="0" oninput="onTaxaChange()" style="width:56px;background:var(--surface3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:14px;padding:4px 8px;outline:none;text-align:center;">
+            <span style="font-family:var(--mono);font-size:11px;color:var(--text3)">× R$ 32,50</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:7px 12px;">
+            <span style="font-size:13px;color:var(--text2)">🏙 Cidade</span>
+            <input type="number" id="taxaCidadeQtd" min="0" value="0" oninput="onTaxaChange()" style="width:56px;background:var(--surface3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:14px;padding:4px 8px;outline:none;text-align:center;">
+            <span style="font-family:var(--mono);font-size:11px;color:var(--text3)">× R$ 10,00</span>
+          </div>
         </div>
       </div>
       <div id="taxaPreviewWrap" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px;white-space:nowrap;">
-        <div style="font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">Valor</div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">Valor Taxas</div>
         <div style="font-family:var(--mono);font-size:18px;font-weight:600;color:var(--amber)" id="taxaPreviewVal">R$ 0,00</div>
       </div>
     </div>
@@ -1099,8 +1103,8 @@ function openLancamento(data) {
     '<input type="number" min="0" value="0" id="row_marmita_alm_'+safeId(e.nome)+'">' +
     '<input type="number" min="0" value="0" id="row_marmita_jan_'+safeId(e.nome)+'"></div>').join('');
   // reset taxa
-  document.getElementById('taxaObra').checked = false;
-  document.getElementById('taxaCidade').checked = false;
+  document.getElementById('taxaObraQtd').value   = 0;
+  document.getElementById('taxaCidadeQtd').value = 0;
   onTaxaChange();
   document.getElementById('modalOverlay').classList.add('open');
   carregarDadosDia(dataInput.value);
@@ -1108,14 +1112,13 @@ function openLancamento(data) {
 function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
 
 function onTaxaChange() {
-  const obra = document.getElementById('taxaObra').checked;
-  const cidade = document.getElementById('taxaCidade').checked;
+  const obra   = parseInt(document.getElementById('taxaObraQtd').value)   || 0;
+  const cidade = parseInt(document.getElementById('taxaCidadeQtd').value) || 0;
   const wrap = document.getElementById('taxaPreviewWrap');
-  const val = document.getElementById('taxaPreviewVal');
+  const val  = document.getElementById('taxaPreviewVal');
   if (!obra && !cidade) { wrap.style.display='none'; return; }
   wrap.style.display = 'block';
-  let total = (obra ? precos.taxa_entrega : 0) + (cidade ? precos.taxa_cidade : 0);
-  val.textContent = 'R$ ' + fmtNum(total);
+  val.textContent = 'R$ ' + fmtNum(obra * precos.taxa_entrega + cidade * precos.taxa_cidade);
 }
 
 async function carregarDadosDia(data) {
@@ -1126,25 +1129,25 @@ async function carregarDadosDia(data) {
     setVal('row_cafe_'+sid,d.cafe||0); setVal('row_almoco_'+sid,d.almoco||0); setVal('row_janta_'+sid,d.janta||0); setVal('row_marmita_alm_'+sid,d.marmita_almoco||d.marmita||0); setVal('row_marmita_jan_'+sid,d.marmita_janta||0);
   }
   // Restaura taxa de entrega
-  const taxa = snap.taxaEntrega || '';
-  document.getElementById('taxaObra').checked   = taxa === 'obra'   || taxa === 'ambos';
-  document.getElementById('taxaCidade').checked = taxa === 'cidade' || taxa === 'ambos';
+  document.getElementById('taxaObraQtd').value   = snap.taxaObraQtd   || (snap.taxaEntrega === 'obra'   || snap.taxaEntrega === 'ambos'   ? 1 : 0);
+  document.getElementById('taxaCidadeQtd').value = snap.taxaCidadeQtd || (snap.taxaEntrega === 'cidade' || snap.taxaEntrega === 'ambos' ? 1 : 0);
   onTaxaChange();
 }
 
 async function salvarLancamento() {
   const data = document.getElementById('lancData').value;
   if (!data) { toast('Informe a data','error'); return; }
-  const obra   = document.getElementById('taxaObra').checked;
-  const cidade = document.getElementById('taxaCidade').checked;
-  const taxaEntrega = obra && cidade ? 'ambos' : obra ? 'obra' : cidade ? 'cidade' : 'nenhuma';
+  const taxaObraQtd   = parseInt(document.getElementById('taxaObraQtd').value)   || 0;
+  const taxaCidadeQtd = parseInt(document.getElementById('taxaCidadeQtd').value) || 0;
+  // mantém campo legado taxaEntrega por retrocompatibilidade
+  const taxaEntrega = taxaObraQtd > 0 && taxaCidadeQtd > 0 ? 'ambos' : taxaObraQtd > 0 ? 'obra' : taxaCidadeQtd > 0 ? 'cidade' : 'nenhuma';
   const ed = {};
   for (const e of empresas) {
     const sid=safeId(e.nome);
     const cafe=parseInt(getVal('row_cafe_'+sid))||0, almoco=parseInt(getVal('row_almoco_'+sid))||0, janta=parseInt(getVal('row_janta_'+sid))||0, marmita_almoco=parseInt(getVal('row_marmita_alm_'+sid))||0, marmita_janta=parseInt(getVal('row_marmita_jan_'+sid))||0;
     if (cafe+almoco+janta+marmita_almoco+marmita_janta>0) ed[e.nome]={cafe,almoco,janta,marmita_almoco,marmita_janta,pagador:e.pagador};
   }
-  await fsSet('alimentacao_lancamentos', data, {data, empresas:ed, taxaEntrega, updatedAt:new Date().toISOString()});
+  await fsSet('alimentacao_lancamentos', data, {data, empresas:ed, taxaEntrega, taxaObraQtd, taxaCidadeQtd, updatedAt:new Date().toISOString()});
   dadosCal={};
   closeModal(); toast('Lançamento salvo!','success');
   renderDashboard();
@@ -1244,8 +1247,13 @@ async function carregarQuinzenal() {
   let qtdObra=0, qtdCidade=0;
   const taxaDias = []; // para a tabela
   for (const l of [...lancsQ].sort((a,b)=>a.data.localeCompare(b.data))) {
-    if (l.taxaEntrega === 'obra' || l.taxaEntrega === 'ambos')   { qtdObra++;   taxaDias.push({data:l.data, tipo:'obra'}); }
-    if (l.taxaEntrega === 'cidade' || l.taxaEntrega === 'ambos') { qtdCidade++; taxaDias.push({data:l.data, tipo:'cidade'}); }
+    // suporte a registros novos (qty) e antigos (string)
+    const qO = l.taxaObraQtd   ?? (l.taxaEntrega === 'obra'   || l.taxaEntrega === 'ambos'   ? 1 : 0);
+    const qC = l.taxaCidadeQtd ?? (l.taxaEntrega === 'cidade' || l.taxaEntrega === 'ambos' ? 1 : 0);
+    qtdObra   += qO;
+    qtdCidade += qC;
+    if (qO > 0) taxaDias.push({data:l.data, tipo:'obra',   qtd:qO});
+    if (qC > 0) taxaDias.push({data:l.data, tipo:'cidade', qtd:qC});
   }
   const totalTaxaObra   = qtdObra   * precos.taxa_entrega;  // R$32,50
   const totalTaxaCidade = qtdCidade * precos.taxa_cidade;   // R$10,00
@@ -1280,13 +1288,14 @@ async function carregarQuinzenal() {
     for (const t of taxaDias)
       trows += '<tr><td class="mono">'+fmtData(t.data)+'</td>'
         +'<td>'+(t.tipo==='obra'?'<span class="badge badge-amber">🏗 Obra</span>':'<span class="badge badge-blue">🏙 Cidade</span>')+'</td>'
-        +'<td class="mono" style="color:var(--amber);font-weight:600">R$ '+fmtNum(t.tipo==='obra'?precos.taxa_entrega:precos.taxa_cidade)+'</td>'
+        +'<td class="mono" style="color:var(--text2);text-align:center">'+t.qtd+'×</td>'
+        +'<td class="mono" style="color:var(--amber);font-weight:600">R$ '+fmtNum(t.qtd*(t.tipo==='obra'?precos.taxa_entrega:precos.taxa_cidade))+'</td>'
         +'<td style="font-size:11px;color:var(--text3)"><button class="btn btn-ghost btn-sm no-print" onclick="openLancamento(\''+t.data+'\')">✏️ Editar</button></td></tr>';
     trows += '<tr style="background:var(--surface2);font-weight:600;">'
-      +'<td colspan="2" style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">'
-      +(qtdObra?qtdObra+' dia(s) obra':'')+(qtdObra&&qtdCidade?' · ':'')+( qtdCidade?qtdCidade+' dia(s) cidade':'')+'</td>'
+      +'<td colspan="3" style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">'
+      +(qtdObra?qtdObra+'× obra':'')+(qtdObra&&qtdCidade?' · ':'')+( qtdCidade?qtdCidade+'× cidade':'')+'</td>'
       +'<td class="mono" style="color:var(--amber);font-size:14px">R$ '+fmtNum(totalTaxas)+'</td><td></td></tr>';
-    tblTaxa.innerHTML='<table><thead><tr><th>Data</th><th>Tipo</th><th>Valor</th><th class="no-print"></th></tr></thead><tbody>'+trows+'</tbody></table>';
+    tblTaxa.innerHTML='<table><thead><tr><th>Data</th><th>Tipo</th><th style="text-align:center">Qtd</th><th>Valor</th><th class="no-print"></th></tr></thead><tbody>'+trows+'</tbody></table>';
   }
 
   // Tabela empresas
@@ -1388,8 +1397,10 @@ async function imprimirQuinzenal() {
   // Totais do período
   let cafe=0, almoco=0, marmita_almoco=0, marmita_janta=0, jantar=0, taxaObra=0, taxaCidade=0;
   for (const l of lancsQ) {
-    if (l.taxaEntrega === 'obra' || l.taxaEntrega === 'ambos') taxaObra++;
-    if (l.taxaEntrega === 'cidade' || l.taxaEntrega === 'ambos') taxaCidade++;
+    if (l.taxaObraQtd   != null) taxaObra   += l.taxaObraQtd;
+    else if (l.taxaEntrega === 'obra' || l.taxaEntrega === 'ambos') taxaObra++;
+    if (l.taxaCidadeQtd != null) taxaCidade += l.taxaCidadeQtd;
+    else if (l.taxaEntrega === 'cidade' || l.taxaEntrega === 'ambos') taxaCidade++;
     for (const d of Object.values(l.empresas || {})) {
       cafe    += d.cafe||0;
       almoco  += d.almoco||0;
@@ -1517,8 +1528,10 @@ async function imprimirQuinzenalHTML() {
     for (const d of Object.values(l.empresas||{})) {
       cafe+=d.cafe||0; almoco+=d.almoco||0; janta+=d.janta||0; marmAlmo+=(d.marmita_almoco||d.marmita||0); marmJanta+=d.marmita_janta||0;
     }
-    if (l.taxaEntrega==='obra' || l.taxaEntrega==='ambos') taxaObra++;
-    if (l.taxaEntrega==='cidade' || l.taxaEntrega==='ambos') taxaCidade++;
+    if (l.taxaObraQtd   != null) taxaObra   += l.taxaObraQtd;
+    else if (l.taxaEntrega==='obra' || l.taxaEntrega==='ambos') taxaObra++;
+    if (l.taxaCidadeQtd != null) taxaCidade += l.taxaCidadeQtd;
+    else if (l.taxaEntrega==='cidade' || l.taxaEntrega==='ambos') taxaCidade++;
     porDia[l.data] = { cafe, almoco, janta, marmAlmo, marmJanta, taxaObra, taxaCidade };
   }
 
@@ -1597,7 +1610,7 @@ async function imprimirQuinzenalHTML() {
   table.dias td.fw { font-weight:bold; }
   .tot-row td { background:#d0d8f0 !important; font-weight:bold; border-top:2px solid #1a3a6e; }
 
-  .resumo { display:grid; grid-template-columns:repeat(6,1fr); gap:3px; margin-top:4px; }
+  .resumo { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin-top:4px; }
   .resumo-box { border:1px solid #ccc; border-radius:2px; padding:3px 4px; font-size:6.5pt; }
   .resumo-box .titulo { font-weight:bold; font-size:6pt; border-bottom:1px solid #eee; margin-bottom:2px; padding-bottom:1px; color:#1a3a6e; white-space:nowrap; }
   .resumo-row { display:flex; justify-content:space-between; padding:1px 0; gap:2px; }
@@ -1673,6 +1686,12 @@ async function imprimirQuinzenalHTML() {
       <div class="resumo-row"><span>Total</span><span>${tMarmAlmo}</span></div>
       <div class="resumo-row"><span>Unit.</span><span>R$ ${R(precos.marmita_almoco)}</span></div>
       <div class="resumo-row bold"><span>TOTAL</span><span>R$ ${R(vMarmAlmo)}</span></div>
+    </div>
+    <div class="resumo-box">
+      <div class="titulo">📦 Marmita Jantar</div>
+      <div class="resumo-row"><span>Total</span><span>${tMarmJanta}</span></div>
+      <div class="resumo-row"><span>Unit.</span><span>R$ ${R(precos.marmita_janta)}</span></div>
+      <div class="resumo-row bold"><span>TOTAL</span><span>R$ ${R(vMarmJanta)}</span></div>
     </div>
     <div class="resumo-box">
       <div class="titulo">🚚 Taxa Obra</div>
