@@ -448,6 +448,16 @@ tbody td.mono { font-family: var(--mono); } tbody td.hl { color: var(--text); fo
             <button class="btn btn-ghost" onclick="window.print()">&#128424; Imprimir</button>
           </div>
         </div>
+        <!-- Seletor de período -->
+        <div class="card mb16" style="padding:16px 20px">
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+            <span style="font-size:11px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.08em;">Período:</span>
+            <button class="btn btn-ghost btn-sm" id="resumoPBtnMes" onclick="setResumoPeriodo('mes')" style="min-width:110px">Mês Inteiro</button>
+            <button class="btn btn-ghost btn-sm" id="resumoPBtn1" onclick="setResumoPeriodo(1)" style="min-width:120px">1ª Quinzena (1–15)</button>
+            <button class="btn btn-ghost btn-sm" id="resumoPBtn2" onclick="setResumoPeriodo(2)" style="min-width:120px">2ª Quinzena (16–fim)</button>
+          </div>
+        </div>
+
         <div id="resumoEmpresasGrid" class="grid-3"><div class="empty-state" style="grid-column:1/-1">Selecione um mês</div></div>
         <div class="card mt16" id="resumoTotaisCard" style="display:none">
           <div class="card-title">&#128176; Totais Consolidados</div>
@@ -509,6 +519,13 @@ tbody td.mono { font-family: var(--mono); } tbody td.hl { color: var(--text); fo
             <div style="display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:4px 6px 4px 12px;">
               <label for="quinzenalNumMedInput" style="font-family:var(--mono);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap">Medição Nº</label>
               <input type="number" id="quinzenalNumMedInput" min="1" step="1" onchange="atualizarNumeroMedicao(this.value)" style="width:64px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--accent2);font-family:var(--mono);font-size:13px;font-weight:600;padding:5px 8px;outline:none;text-align:center">
+            </div>
+            <div style="position:relative;">
+              <button class="btn btn-ghost btn-sm" id="btnQuinzenalEmpresas" onclick="toggleQuinzenalEmpresasPanel()" style="white-space:nowrap">🏢 Empresas p/ Cobrança</button>
+              <div id="quinzenalEmpresasPanel" style="display:none;position:absolute;top:calc(100% + 4px);right:0;z-index:50;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;min-width:240px;max-height:260px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.4);">
+                <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Incluir no resumo de cobrança (rodapé do relatório)</div>
+                <div id="quinzenalEmpresasCheckboxes" style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text)"></div>
+              </div>
             </div>
             <button class="btn btn-ghost" onclick="imprimirQuinzenalHTML()">🖨 Imprimir</button>
             <button class="btn btn-primary" onclick="imprimirQuinzenal()">📄 Gerar Relatório</button>
@@ -650,7 +667,7 @@ function navTo(page, el) {
   const titles = { dashboard:'Dashboard', calendario:'Calendário', historico:'Histórico', resumo:'Resumo por Empresa', descontos:'Descontos para Medição', quinzenal:'Fechamento Quinzenal', precos:'Preços', empresas:'Empresas' };
   document.getElementById('topbarTitle').textContent = titles[page] || page;
   if (page === 'historico') { popularSelectEmpresas(); carregarHistorico(); }
-  if (page === 'resumo') carregarResumoEmpresas();
+  if (page === 'resumo') setResumoPeriodo(resumoPeriodoAtiva);
   if (page === 'calendario') renderCalendario();
   if (page === 'dashboard') renderDashboard();
   if (page === 'descontos') { popularSelectDescEmpresas(); carregarDescontos(); }
@@ -705,6 +722,42 @@ function popularSelectEmpresas() {
   if (atual && empresas.find(e=>e.nome===atual)) sel.value = atual;
   document.getElementById('btnImprimirEmpresa').style.display = sel.value ? 'inline-flex' : 'none';
 }
+
+function popularSelectQuinzenalEmpresas() {
+  const wrap = document.getElementById('quinzenalEmpresasCheckboxes');
+  if (!wrap) return;
+  const marcadas = new Set(getQuinzenalEmpresasSelecionadas());
+  wrap.innerHTML = empresas.map(e =>
+    '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" value="'+e.nome+'" onchange="atualizarContadorQuinzenalEmpresas()"'+(marcadas.has(e.nome)?' checked':'')+'> '+e.nome+'</label>'
+  ).join('') || '<div style="font-size:11px;color:var(--text3)">Nenhuma empresa cadastrada</div>';
+  atualizarContadorQuinzenalEmpresas();
+}
+
+function toggleQuinzenalEmpresasPanel() {
+  const p = document.getElementById('quinzenalEmpresasPanel');
+  if (!p) return;
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+}
+
+function getQuinzenalEmpresasSelecionadas() {
+  return [...document.querySelectorAll('#quinzenalEmpresasCheckboxes input:checked')].map(i => i.value);
+}
+
+function atualizarContadorQuinzenalEmpresas() {
+  const n = getQuinzenalEmpresasSelecionadas().length;
+  const btn = document.getElementById('btnQuinzenalEmpresas');
+  if (!btn) return;
+  btn.innerHTML = n > 0 ? '🏢 Empresas p/ Cobrança (' + n + ')' : '🏢 Empresas p/ Cobrança';
+}
+
+// fecha o painel ao clicar fora
+document.addEventListener('click', function(ev) {
+  const panel = document.getElementById('quinzenalEmpresasPanel');
+  const btn = document.getElementById('btnQuinzenalEmpresas');
+  if (!panel || panel.style.display === 'none') return;
+  if (panel.contains(ev.target) || (btn && btn.contains(ev.target))) return;
+  panel.style.display = 'none';
+});
 
 function popularSelectDescEmpresas() {
   const sel = document.getElementById('descFiltroEmpresa');
@@ -1089,10 +1142,29 @@ async function imprimirPorEmpresa() {
   setTimeout(() => win.print(), 800);
 }
 
+let resumoPeriodoAtiva = 'mes'; // 'mes' | 1 | 2
+
+function setResumoPeriodo(p) {
+  resumoPeriodoAtiva = p;
+  document.getElementById('resumoPBtnMes').classList.toggle('qbtn-active', p === 'mes');
+  document.getElementById('resumoPBtn1').classList.toggle('qbtn-active', p === 1);
+  document.getElementById('resumoPBtn2').classList.toggle('qbtn-active', p === 2);
+  carregarResumoEmpresas();
+}
+
 async function carregarResumoEmpresas() {
   const mes=document.getElementById('resumoMesFiltro').value; if(!mes)return;
-  const [ano,m]=mes.split('-'); document.getElementById('resumoMesSub').textContent=MESES[parseInt(m)-1]+' '+ano;
-  const lancs=await getLancamentosMes(mes); const pp={};
+  const [ano,m]=mes.split('-');
+  let lancs=await getLancamentosMes(mes);
+  let sub = MESES[parseInt(m)-1]+' '+ano;
+  if (resumoPeriodoAtiva === 1 || resumoPeriodoAtiva === 2) {
+    const { ini, fim } = getQuinzenaDatas(mes, resumoPeriodoAtiva);
+    lancs = lancs.filter(l => l.data >= ini && l.data <= fim);
+    const nomeQ = resumoPeriodoAtiva === 1 ? '1ª Quinzena (01–15)' : '2ª Quinzena (16–' + new Date(parseInt(ano), parseInt(m), 0).getDate() + ')';
+    sub += ' — ' + nomeQ;
+  }
+  document.getElementById('resumoMesSub').textContent = sub;
+  const pp={};
   for(const l of lancs){for(const [nome,d] of Object.entries(l.empresas||{})){const pag=d.pagador||nome;if(!pp[pag])pp[pag]={cafe:0,almoco:0,janta:0,marmita_almoco:0,marmita_janta:0,empresas:new Set()};pp[pag].cafe+=d.cafe||0;pp[pag].almoco+=d.almoco||0;pp[pag].janta+=d.janta||0;pp[pag].marmita_almoco+=(d.marmita_almoco||d.marmita||0);pp[pag].marmita_janta+=d.marmita_janta||0;pp[pag].empresas.add(nome);}}
   const grid=document.getElementById('resumoEmpresasGrid'), card=document.getElementById('resumoTotaisCard');
   if(!Object.keys(pp).length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1">Nenhum dado neste mês</div>';card.style.display='none';return;}
@@ -1200,6 +1272,7 @@ function initQuinzenal() {
   // auto-detecta quinzena pelo dia atual
   const hoje = new Date().getDate();
   quinzenalAtiva = hoje <= 15 ? 1 : 2;
+  popularSelectQuinzenalEmpresas();
   setQuinzena(quinzenalAtiva);
 }
 
@@ -1527,12 +1600,14 @@ async function imprimirQuinzenalHTML() {
     numMed = await getNumeroMedicaoAtual();
   } catch(e) {}
 
+  const empresasCobranca = getQuinzenalEmpresasSelecionadas();
+
   const lancs = await getLancamentosMes(String(ano).padStart(4,'0') + '-' + String(m).padStart(2,'0'));
-  const descQ  = (await getDescontosMes(String(ano).padStart(4,'0') + '-' + String(m).padStart(2,'0')))
-                   .filter(d => d.data >= ini && d.data <= fim);
+  const descontosMes  = await getDescontosMes(String(ano).padStart(4,'0') + '-' + String(m).padStart(2,'0'));
+  const descQ  = descontosMes.filter(d => d.data >= ini && d.data <= fim);
   const lancsQ = lancs.filter(l => l.data >= ini && l.data <= fim);
 
-  // Agrega por data
+  // Agrega por data — relatório consolidado, todas as empresas
   const porDia = {};
   for (const l of lancsQ) {
     let cafe=0, almoco=0, janta=0, marmAlmo=0, marmJanta=0, taxaObra=0, taxaCidade=0;
@@ -1544,6 +1619,44 @@ async function imprimirQuinzenalHTML() {
     if (l.taxaCidadeQtd != null) taxaCidade += l.taxaCidadeQtd;
     else if (l.taxaEntrega==='cidade' || l.taxaEntrega==='ambos') taxaCidade++;
     porDia[l.data] = { cafe, almoco, janta, marmAlmo, marmJanta, taxaObra, taxaCidade };
+  }
+
+  // Resumo por pagador — apenas das empresas marcadas em "Empresas p/ Cobrança"
+  const cobrancaPorPagador = {};
+  if (empresasCobranca.length) {
+    for (const l of lancsQ) {
+      for (const [nome, d] of Object.entries(l.empresas || {})) {
+        if (!empresasCobranca.includes(nome)) continue;
+        const pag = d.pagador || nome;
+        if (!cobrancaPorPagador[pag]) cobrancaPorPagador[pag] = {cafe:0,almoco:0,janta:0,marmita_almoco:0,marmita_janta:0,empresas:new Set()};
+        const c = cobrancaPorPagador[pag];
+        c.cafe += d.cafe||0; c.almoco += d.almoco||0; c.janta += d.janta||0;
+        c.marmita_almoco += (d.marmita_almoco||d.marmita||0); c.marmita_janta += d.marmita_janta||0;
+        c.empresas.add(nome);
+      }
+    }
+  }
+  function linhaCobranca(label, qtd, preco, tot) {
+    if (!qtd) return '';
+    return '<div class="cobranca-row"><span>'+label+'</span><span>'+qtd+' x R$'+(Number.isInteger(preco)?preco:preco.toFixed(2))+' = <b>R$ '+R(tot)+'</b></span></div>';
+  }
+  let cobrancaHtml = '';
+  if (Object.keys(cobrancaPorPagador).length) {
+    const cards = Object.entries(cobrancaPorPagador).map(([pag, d]) => {
+      const tc=d.cafe*precos.cafe, ta=d.almoco*precos.almoco, tj=d.janta*precos.janta, tma=d.marmita_almoco*precos.marmita_almoco, tmj=d.marmita_janta*(precos.marmita_janta||precos.marmita_almoco);
+      const tot = tc+ta+tj+tma+tmj;
+      return '<div class="cobranca-card">'
+        + '<div class="cobranca-card-hdr"><span>'+pag+'</span><span>R$ '+R(tot)+'</span></div>'
+        + '<div class="cobranca-card-body">'
+        + linhaCobranca('☕ Café da Manhã', d.cafe, precos.cafe, tc)
+        + linhaCobranca('🍽 Almoço', d.almoco, precos.almoco, ta)
+        + linhaCobranca('🌙 Jantar', d.janta, precos.janta, tj)
+        + linhaCobranca('📦 Marmita Almoço', d.marmita_almoco, precos.marmita_almoco, tma)
+        + linhaCobranca('📦 Marmita Jantar', d.marmita_janta, precos.marmita_janta||precos.marmita_almoco, tmj)
+        + '<div class="cobranca-emp">Empresas: '+[...d.empresas].join(', ')+'</div>'
+        + '</div></div>';
+    }).join('');
+    cobrancaHtml = '<div class="cobranca-wrap"><div class="cobranca-title">💰 RESUMO PARA COBRANÇA</div><div class="cobranca-grid">'+cards+'</div></div>';
   }
 
   // Totais
@@ -1636,6 +1749,17 @@ async function imprimirQuinzenalHTML() {
   .assin { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px; font-size:7pt; }
   .assin-box { border-top:1px solid #000; padding-top:2px; text-align:center; color:#444; }
   .ftr { margin-top:4px; font-size:6pt; color:#888; display:flex; justify-content:space-between; border-top:1px solid #eee; padding-top:2px; }
+  .rodape-resumo { page-break-inside: avoid; break-inside: avoid; }
+  .cobranca-wrap { margin-top:10px; }
+  .cobranca-title { font-size:8pt; font-weight:bold; color:#1a3a6e; border-bottom:2px solid #1a3a6e; padding-bottom:2px; margin-bottom:5px; }
+  .cobranca-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+  .cobranca-card { border:1px solid #1a3a6e; border-radius:3px; overflow:hidden; font-size:6.5pt; page-break-inside: avoid; break-inside: avoid; }
+  .cobranca-card-hdr { background:#1a3a6e; color:#fff; padding:3px 6px; display:flex; justify-content:space-between; font-weight:bold; }
+  .cobranca-card-body { padding:4px 6px; }
+  .cobranca-row { display:flex; justify-content:space-between; padding:1px 0; border-bottom:1px solid #eee; }
+  .cobranca-row:last-child { border-bottom:none; }
+  .cobranca-emp { margin-top:3px; font-size:6pt; color:#666; }
+  .resumo-box, .desc-box, .assin, .ftr { page-break-inside: avoid; break-inside: avoid; }
   @media print { body { padding:0; } @page { size: A4 landscape; margin: 5mm; } }
 </style></head><body>
 <div class="page">
@@ -1673,6 +1797,7 @@ async function imprimirQuinzenalHTML() {
   </table>
 
   <!-- Resumos em linha (6 colunas) -->
+  <div class="rodape-resumo">
   <div class="resumo">
     <div class="resumo-box">
       <div class="titulo">☕ Café da Manhã</div>
@@ -1740,6 +1865,9 @@ async function imprimirQuinzenalHTML() {
       </div>
     </div>
   </div>
+  </div>
+
+  ${cobrancaHtml}
 
 </div>
 </body></html>`;
